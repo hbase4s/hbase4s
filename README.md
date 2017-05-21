@@ -1,6 +1,6 @@
 # HBase4s
 
-[![Build Status](https://travis-ci.org/vglushak-vt/hbase4s.svg?branch=develop)](https://travis-ci.org/vglushak-vt/hbase4s)
+[![Build Status](https://travis-ci.org/vglushak-vt/hbase4s.svg?branch=develop)](https://travis-ci.org/vglushak-vt/hbase4s) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0092dd676154718af28f83f5309efd2)](https://www.codacy.com/app/vglushak-vt/hbase4s?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=vglushak-vt/hbase4s&amp;utm_campaign=Badge_Grade)
 
 
 Scala wrapper around HBase client library that provides user-friendly type-safe API and query language to work with HBase database.
