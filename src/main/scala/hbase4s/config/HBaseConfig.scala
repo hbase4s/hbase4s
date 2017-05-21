@@ -10,6 +10,9 @@ trait HBaseConfig {
   def configuration: Configuration
 }
 
+/**
+  * Builds configuration based on HBase config files found in class path
+  */
 class HBaseDefaultConfig extends HBaseConfig {
 
   protected val conf: Configuration = HBaseConfiguration.create()
@@ -18,11 +21,19 @@ class HBaseDefaultConfig extends HBaseConfig {
 
 }
 
+/**
+  * Builds configuration based on provided set of properties
+  * @param props HBase properties
+  */
 class HBasePropsConfig(props: Map[String, String]) extends HBaseDefaultConfig {
 
   props.foreach { case (k, v) => conf.set(k, v) }
 
 }
 
+/**
+  * Proxy class, build configuration based on predefined @Configuration object
+  *
+  */
 class HBaseExternalConfig(val configuration: Configuration) extends HBaseConfig
 

@@ -15,7 +15,7 @@ class FilterParser(val input: ParserInput) extends Parser {
   }
 
   private[this] def MultiExpr: Rule1[Expr] = rule {
-    Factor ~ ws ~  zeroOrMore(
+    Factor ~ ws ~ zeroOrMore(
       ignoreCase("or") ~ Factor ~> Or
         | ignoreCase("and") ~ Factor ~> And
     )
@@ -33,8 +33,8 @@ class FilterParser(val input: ParserInput) extends Parser {
     openBracket ~ SingleExpr ~ closeBracket
   }
 
-  private[this] def SingleExpr: Rule1[SingleColVal[String]] = rule {
-    FieldName ~ ws ~ OpExpr ~ ws ~ QuotedText ~> ((a: Column, b: CompareOp, c: String) => SingleColVal(a, b, c))
+  private[this] def SingleExpr: Rule1[SingleColVal[Any]] = rule {
+    FieldName ~ ws ~ OpExpr ~ ws ~ (TypedExpr | QuotedText) ~> ((a: Column, b: CompareOp, c: Any) => SingleColVal(a, b, c))
   }
 
   private[this] def KeywordBased: Rule1[Expr] = rule {
@@ -43,17 +43,24 @@ class FilterParser(val input: ParserInput) extends Parser {
       Keywords.RowPrefix ~ eq ~ CapturedKeyword ~> RowPrefix |
       Keywords.ColumnPrefix ~ eq ~ ComaSeparatedKeywords ~> MultipleColumnPrefix |
       Keywords.ColumnPrefix ~ eq ~ CapturedKeyword ~> ColumnPrefix |
-      Keywords.ColumnLimit ~ eq ~ capture(oneOrMore(CharPredicate.Digit)) ~> (x => ColumnCountGet(x.toInt)) |
-      Keywords.PageCount ~ eq ~ capture(oneOrMore(CharPredicate.Digit)) ~> (y => Page(y.toInt)) |
+      Keywords.ColumnLimit ~ eq ~ Int ~> (x => ColumnCountGet(x.toInt)) |
+      Keywords.PageCount ~ eq ~ Int ~> (y => Page(y.toInt)) |
       Keywords.StopRow ~ eq ~ CapturedKeyword ~> InclusiveStop |
       Keywords.ColName ~ ws ~ OpExpr ~ ws ~ FieldName ~> Qualifier |
       Keywords.ColValue ~ ws ~ OpExpr ~ ws ~ (QuotedText | CapturedKeyword) ~> Value
   }
 
 
-
   private[this] def eq = rule {
     ws ~ oneOrMore(anyOf("=")) ~ ws
+  }
+
+  private[this] def Int = rule {
+    capture(oneOrMore(CharPredicate.Digit))
+  }
+
+  private[this] def Num = rule {
+    capture(oneOrMore(CharPredicate.Digit) ~ zeroOrMore(anyOf(",.") ~ oneOrMore(CharPredicate.Digit)))
   }
 
   private[this] def ComaSeparatedKeywords = rule {
@@ -70,6 +77,16 @@ class FilterParser(val input: ParserInput) extends Parser {
 
   private[this] def CapturedKeyword: Rule1[String] = rule {
     zeroOrMore(Quote) ~ capture(oneOrMore(CharPredicate.AlphaNum | anyOf("_"))) ~ zeroOrMore(Quote)
+  }
+
+  private[this] def TypedExpr: Rule1[Any] = rule {
+    "int(" ~ Int ~ ")" ~> ((x: String) => x.toInt) |
+      "long(" ~ Int ~ ")" ~> ((x: String) => x.toLong) |
+      "bigdecimal(" ~ Int ~ ")" ~> ((x: String) => BigDecimal(x)) |
+      "bool(" ~ capture("true" | "false") ~ ")" ~> ((x: String) => x.toBoolean) |
+      "short(" ~ Int ~ ")" ~> ((x: String) => x.toShort) |
+      "float(" ~ Num ~ ")" ~> ((x: String) => x.toFloat) |
+      "double(" ~ Num ~ ")" ~> ((x: String) => x.toDouble)
   }
 
   private[this] def QuotedText: Rule1[String] = rule {

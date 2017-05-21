@@ -1,20 +1,15 @@
 ### Tasks. MVP
 
-1. Add documentation to README regarding query language and API (put, scan, delete, get). Examples left.
+1. Add documentation to README regarding query language and API (put, scan, delete, get). 
+Example added. Should add full API description. To do later on.
 
-2. BUG: search for non string fields does not work. 
-Need to extend parser where you can pass a type of data.
-For example event.index == int(5) or event.index == int:5  (I like first option more) 
-This adds extra complexity on searching for fields with custom fields. 
-We need a way to transform those types. A way to understand how to represent them. 
-Should postpone a feature of extension types support.
 
-3. Extend filter support with some basic filters. 
+2. Extend filter support with some basic filters. 
 Some filters left to fix (should it goes to below section)
 I've incorrectly treat prefix in value based filters (it's related to data type). 
 Issue related to #2 - I should use the same approach for both this issues.
 
-4. Setup travis build and gitter chat.
+3. Setup gitter chat.
 
 ### Tasks. Others
 

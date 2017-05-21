@@ -53,9 +53,9 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
     }
   }
 
-  def scan[K: TypeTag](filter: String): ResultTraversable[K] = {
-    scan(FilterTranslator.fromExpr(FilterParser.parse(filter)))
-  }
+  def scan[K: TypeTag](filter: String): ResultTraversable[K] = scan[K](FilterParser.parse(filter))
+
+  def scan[K: TypeTag](f: filter.Expr): ResultTraversable[K] = scan[K](FilterTranslator.fromExpr(f))
 
   def scan[K: TypeTag](fl: Filter): ResultTraversable[K] = {
     logger.debug(s"Searching with filter $fl")

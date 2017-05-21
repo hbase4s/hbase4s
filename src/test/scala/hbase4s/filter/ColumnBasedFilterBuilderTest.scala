@@ -50,6 +50,11 @@ class ColumnBasedFilterBuilderTest extends FlatSpec with Matchers {
     }
   }
 
+  "Int value type" should "be treated as non-string" in {
+    import FilterDsl._
+    FilterParser.parse("family:column == int(18)") shouldBe (c("family", "column") === 18)
+  }
+
   private[this] def parseOrFailOnErr[T](scf: String) = {
     try {
       FilterParser.parse(scf)

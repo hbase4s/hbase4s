@@ -36,7 +36,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
     val res2 = dsl.scan[String](s"($Fam1:$F1=value_20 )")
       .map(wr => Test2Field(wr.key, wr.asString(s"$Fam1:$F1"), wr.asString(s"$Fam2:$F2")))
     res2.size shouldBe 1
-    res2.head.field1 shouldBe "value_20"
+    res2.headOption.map(_.field1 shouldBe "value_20")
   }
 
   "It" should "perform put and scan with int key" in {
@@ -51,9 +51,9 @@ class HBaseClientTest extends FlatSpec with Matchers {
         Test2Field(wr.key, wr.asString(s"$Fam1:$someField"), wr.asString(s"$Fam2:$F2"))
       })
     res2.size shouldBe 1
-    res2.head.key shouldBe 20
-    res2.head.field1 shouldBe "value_20"
-    res2.head.field2 shouldBe "value_2"
+    res2.headOption.map(_.key shouldBe 20)
+    res2.headOption.map(_.field1 shouldBe "value_20")
+    res2.headOption.map(_.field2 shouldBe "value_2")
   }
 
   "It" should "know how to store case class" in {

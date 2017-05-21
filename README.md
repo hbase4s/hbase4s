@@ -17,17 +17,76 @@ MVP (minimal valuable product) functionality includes:
 
 Note: raise an issue if some of basic functionality was missed
 
+## Getting started
+
+Before starting, note!
+This is not production ready library. It's currently under active development. 
+Provided API can be changed from version to version without providing backward compatibility.
+
+It's recommended to get familiar with library by pulling it locally and lookgin closely into existent tests.
+They cover most of relevant business cases that are implemented in library.
+
+Below is provided set of basic examples of establishing connection to HBase database, storing data to table, 
+extracting it in different way and removing.
+
+```scala
+// hbase4s.GettingStartedTest
+
+package hbase4s
+
+import hbase4s.config.HBaseDefaultConfig
+import hbase4s.utils.HBaseImplicitUtils._
+
+object Example {
+
+  case class Event(index: Int, id: Long, enabled: Boolean, description: String)
+
+  // prerequisites. Specified table with relevant family name exists
+  val Table = "transactions"
+  val Family = "event"
+
+  // establish connection to HBase server, point HBaseClient to work with transactions table
+  val client = new HBaseClient(new HBaseConnection(new HBaseDefaultConfig), Table)
+
+  val e = Event(546, 10L, enabled = true, "oh-oh")
+  val rowId = "oh-oh-event"
+
+  // store case class in hbase table, under provided columns family
+  client.put(rowId, e)
+
+  // retrieve data from HBase by key and transform it to instance of event class
+  val eventInDb = client.get(rowId).map(_.typed[Event].asClass)
+
+  // two version of querying data from HBase table
+  // results are represented as List of Event class
+  // string-based DSL
+  val e1 = client.scan[String]("(event:description = \"oh-oh\") AND (event:index > int(18))").map(x => x.typed[Event].asClass)
+
+  // scala static type DSL
+  import hbase4s.filter.FilterDsl._
+  val e2 = client.scan[String](
+    c("event", "description") === "oh-oh" & c("event", "index") > 18
+  ).map(x => x.typed[Event].asClass)
+  
+  require(e1 == e2)
+
+  // remove by key
+  client.delete(rowId)
+}
+```
+
 ## CRUD
 
 HBase does not support data types. All columns and row key are stored as array of `bytes`. 
-Java HBase client works with the same data structure. 
+Java HBase client works with the same single data structure. 
+It's user responsibility, properly transform your data types to and from `bytes`.  
 
 Primary goal of HBase4s is to provides type-safe API for CRUD operations on top of Java HBase client.
 
 There are default implicit support for the following scala types:
 ```String, Boolean, Short, Int, Long, Float, Double, BigDecimal```.
 
-This list can be extended by registering relevant extractor. // TODO: implement this feature
+This list can be extended by registering relevant extractor. Feature under development (yet).
 
 User can use any of specified type to store, retrieve, get or delete data from HBase. 
 
