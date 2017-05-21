@@ -1,7 +1,6 @@
 package hbase4s.filter
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.slf4j.LoggerFactory
+import hbase4s.filter.FilterDsl._
 
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.
@@ -22,4 +21,11 @@ class AllFilterBuilderTest extends AbstractFilterTest {
     parseOrFailOnErr("column_name == event:date") shouldBe Qualifier(Eq, Column("event", "date"))
     parseOrFailOnErr("column_value == some") shouldBe Value(Eq, "some")
   }
+
+  "Static and string based filters" should "produce the same output" in {
+    val filter1 = keys & (c("family", "column") !== "SomeValue")
+    val filter2 = parseOrFailOnErr("(key AND (family:column != SomeValue))")
+    filter1 shouldBe filter2
+  }
+
 }

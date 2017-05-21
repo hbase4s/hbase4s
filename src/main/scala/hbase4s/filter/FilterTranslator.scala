@@ -33,7 +33,7 @@ object FilterTranslator {
     // case Value(op, q) => new ValueFilter(compareOpHbase(op), q)
 
     case SingleColVal(col, op, v, ifMissing) =>
-      val scvf = new SingleColumnValueFilter(col.family, col.name, compareOpHbase(op), v)
+      val scvf = new SingleColumnValueFilter(col.family, col.name, compareOpHbase(op), anyToBytes(v))
       scvf.setFilterIfMissing(ifMissing)
       scvf
     case And(l, r) => new FilterList(FilterList.Operator.MUST_PASS_ALL, fromExpr(l), fromExpr(r))

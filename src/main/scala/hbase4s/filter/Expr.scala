@@ -5,8 +5,6 @@ package hbase4s.filter
   */
 sealed trait Expr
 
-case object Invalid extends Expr
-
 case class Column(family: String, name: String)
 
 case class And(l: Expr, r: Expr) extends Expr
@@ -85,4 +83,4 @@ case class Value(cp: CompareOp, q: String) extends Expr
   * @param value comparator - column value to compare
   * @param setFilterIfMissing - if false returns rows where column with such name missed, default is true
   */
-case class SingleColVal(col: Column, op: CompareOp, value: String, setFilterIfMissing: Boolean = true) extends Expr
+case class SingleColVal[T](col: Column, op: CompareOp, value: T, setFilterIfMissing: Boolean = true) extends Expr

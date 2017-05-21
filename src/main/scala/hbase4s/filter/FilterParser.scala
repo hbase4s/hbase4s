@@ -15,7 +15,7 @@ class FilterParser(val input: ParserInput) extends Parser {
   }
 
   private[this] def MultiExpr: Rule1[Expr] = rule {
-    Factor ~ zeroOrMore(
+    Factor ~ ws ~  zeroOrMore(
       ignoreCase("or") ~ Factor ~> Or
         | ignoreCase("and") ~ Factor ~> And
     )
@@ -33,7 +33,7 @@ class FilterParser(val input: ParserInput) extends Parser {
     openBracket ~ SingleExpr ~ closeBracket
   }
 
-  private[this] def SingleExpr: Rule1[SingleColVal] = rule {
+  private[this] def SingleExpr: Rule1[SingleColVal[String]] = rule {
     FieldName ~ ws ~ OpExpr ~ ws ~ QuotedText ~> ((a: Column, b: CompareOp, c: String) => SingleColVal(a, b, c))
   }
 
