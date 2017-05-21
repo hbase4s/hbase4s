@@ -4,8 +4,9 @@ import hbase4s.config.HBaseConfig
 import hbase4s.filter.{FilterParser, FilterTranslator}
 import hbase4s.utils.HBaseImplicitUtils._
 import org.apache.hadoop.hbase.client._
+import org.apache.hadoop.hbase.filter.Filter
 import org.apache.hadoop.hbase.{Cell, CellUtil, TableName}
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe._
@@ -19,9 +20,9 @@ class HBaseConnection(conf: HBaseConfig) {
 
 class HBaseClient(connection: HBaseConnection, tableName: String) {
 
-  private[this] val logger = LoggerFactory.getLogger(getClass)
+  protected val logger: Logger = LoggerFactory.getLogger(getClass)
 
-  private[this] val table = connection.conn.getTable(TableName.valueOf(tableName))
+  protected val table: Table = connection.conn.getTable(TableName.valueOf(tableName))
 
   def put[K, T <: AnyRef with Product](key: K, cc: T): Unit = putFields(RecordFactory.build(key, cc))
 
@@ -41,8 +42,9 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
     * @tparam K type of rows keys
     * @return map of rows [row key, list of fields]
     */
-  def scanAll[K: TypeTag]: Map[K, List[Field[Array[Byte]]]] = transformResult(table.getScanner(new Scan()))
+  def scanAll[K: TypeTag]: Map[K, List[Field[Array[Byte]]]] = transformResults(table.getScanner(new Scan()))
 
+  @deprecated("unrelailable api")
   def scanAllAsStr: Map[String, List[Field[String]]] = {
     scanAll[String].map { case (k, v) =>
       k -> v.map { f =>
@@ -52,19 +54,40 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
   }
 
   def scan[K: TypeTag](filter: String): ResultTraversable[K] = {
-    val s = new Scan()
-    val fl = FilterTranslator.fromExpr(FilterParser.parse(filter))
-    logger.debug(s"Searching with filter $fl")
-    s.setFilter(fl)
-    val scan = table.getScanner(s)
-    new ResultTraversable[K](transformResult(scan))
+    scan(FilterTranslator.fromExpr(FilterParser.parse(filter)))
   }
 
-  private[this] def transformResult[K: TypeTag](scan: ResultScanner) = scan.asScala.map { res =>
-    val key = res.getRow
-    val map = res.listCells().asScala.map(cellToField).toList
-    key.as[K] -> map
-  }.toMap
+  def scan[K: TypeTag](fl: Filter): ResultTraversable[K] = {
+    logger.debug(s"Searching with filter $fl")
+    val s = new Scan()
+    s.setFilter(fl)
+    val scan = table.getScanner(s)
+    new ResultTraversable[K](transformResults(scan))
+  }
+
+  def get[K: TypeTag](r: K): Option[WrappedResult[K]] = get(List(r)).headOption
+
+  // TODO: implement test
+  def get[K: TypeTag](r: List[K]): ResultTraversable[K] = new ResultTraversable[K](
+    table.get(r.map(req => new Get(anyToBytes(req))).asJava).flatMap(r => transformResult[K](r)).map { case (k, value) =>
+      k -> value
+    }.toMap
+  )
+
+  // TODO: it shou
+  def delete[K](r: K): Unit = table.delete(new Delete(anyToBytes(r)))
+
+  // TODO: implement test
+  def delete[K](r: List[K]): Unit = table.delete(r.map(req => new Delete(anyToBytes(r))).asJava)
+
+  private[this] def transformResults[K: TypeTag](scan: ResultScanner) = scan.asScala.flatMap { x =>
+    transformResult[K](x)
+  }.toMap[K, List[Field[Array[Byte]]]]
+
+  private[this] def transformResult[K: TypeTag](res: Result) = {
+    if (res.isEmpty) None
+    else Some(res.getRow.as[K] -> res.listCells().asScala.map(cellToField).toList)
+  }
 
   private[this] def cellToField(cell: Cell) = Field(CellUtil.cloneFamily(cell), CellUtil.cloneQualifier(cell), CellUtil.cloneValue(cell))
 

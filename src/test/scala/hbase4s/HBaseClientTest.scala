@@ -20,7 +20,6 @@ class HBaseClientTest extends FlatSpec with Matchers {
   private[this] val Families: Array[Array[Byte]] = Array(Fam1, Fam2, Fam3)
   utility.createTable(TestTable, Families, 1)
 
-
   case class Test2Field[T](key: T, field1: String, field2: String)
 
   val Max = 1000
@@ -63,13 +62,24 @@ class HBaseClientTest extends FlatSpec with Matchers {
       dsl.put(x, testData.copy(index = x))
     }
 
-    val events = dsl.scan[Int]("event:description == oh_yes").flatMap { wr =>
+    val events = dsl.scan[Int]("event:description == oh_yes").map { wr =>
       wr.typed[Event].asClass
     }.toList
 
     events.foreach { e =>
       e.enabled shouldBe true
     }
+  }
+
+  "It" should "allow to put, get, filter, delete" in {
+    val e = Event(1, 10L, enabled = true, "oh-oh")
+    val row_id = "oh-oh-event"
+    dsl.put(row_id, e)
+    dsl.get(row_id).map(_.typed[Event].asClass) shouldBe Some(e)
+    dsl.scan[String]("event:description = \"oh-oh\"").map(x => x.typed[Event].asClass) shouldBe List(e)
+    dsl.delete(row_id)
+    dsl.get(row_id).map(_.typed[Event].asClass) shouldBe None
+    dsl.scan[String]("event:description = \"oh-oh\"").map(x => x.typed[Event].asClass) shouldBe List()
   }
 }
 

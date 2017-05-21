@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.
   */
-class FilterBuilderTest extends FlatSpec with Matchers {
+class ColumnBasedFilterBuilderTest extends FlatSpec with Matchers {
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
@@ -26,7 +26,7 @@ class FilterBuilderTest extends FlatSpec with Matchers {
   "All variants of single expression" should "be transformed" in {
     singleColVariance.foreach { scf =>
       val value = parseOrFailOnErr(scf) match {
-        case FilterOp(col, op, v, _) =>
+        case SingleColVal(col, op, v, _) =>
           op shouldBe Eq
           col shouldBe Column("family", "column")
           v should be("12345")
@@ -40,8 +40,14 @@ class FilterBuilderTest extends FlatSpec with Matchers {
     }
 
     parseOrFailOnErr(otherFilter) shouldBe Or(
-      FilterOp(Column("family", "field1"), Eq, "value_20"),
-      FilterOp(Column("family", "field2"), Eq, otherVal))
+      SingleColVal(Column("family", "field1"), Eq, "value_20"),
+      SingleColVal(Column("family", "field2"), Eq, otherVal))
+  }
+
+  "Invalid filters" should "be treated user-friendly" in {
+    intercept[RuntimeException] {
+      FilterParser.parse("column_aaa == 18")
+    }
   }
 
   private[this] def parseOrFailOnErr[T](scf: String) = {

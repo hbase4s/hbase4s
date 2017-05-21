@@ -5,7 +5,7 @@ import org.parboiled2._
 
 import scala.util.{Failure, Success}
 
-/**
+/** xxx
   * Created by Volodymyr.Glushak on 11/05/2017.
   */
 class FilterParser(val input: ParserInput) extends Parser {
@@ -22,19 +22,42 @@ class FilterParser(val input: ParserInput) extends Parser {
   }
 
   private[this] def Factor: Rule1[Expr] = rule {
-    SingleExprWrapped | SingleExpr | MultiExprWrapped | MultiExpr
+    SingleExprWrapped | KeywordBased | SingleExpr | MultiExprWrapped
   }
 
   private[this] def MultiExprWrapped = rule {
     openBracket ~ MultiExpr ~ closeBracket
   }
 
-  private[this] def SingleExprWrapped = rule {
+  private[this] def SingleExprWrapped: Rule1[Expr] = rule {
     openBracket ~ SingleExpr ~ closeBracket
   }
 
-  private[this] def SingleExpr: Rule1[FilterOp] = rule {
-    FieldName ~ ws ~ OpExpr ~ ws ~ QuotedText ~> ((a: Column, b: CompareOp, c: String) => FilterOp(a, b, c))
+  private[this] def SingleExpr: Rule1[SingleColVal] = rule {
+    FieldName ~ ws ~ OpExpr ~ ws ~ QuotedText ~> ((a: Column, b: CompareOp, c: String) => SingleColVal(a, b, c))
+  }
+
+  private[this] def KeywordBased: Rule1[Expr] = rule {
+    (Keywords.Key ~ push(KeyOnly)) |
+      (Keywords.FirstKey ~ push(FirstKeyOnly)) |
+      Keywords.RowPrefix ~ eq ~ CapturedKeyword ~> RowPrefix |
+      Keywords.ColumnPrefix ~ eq ~ ComaSeparatedKeywords ~> MultipleColumnPrefix |
+      Keywords.ColumnPrefix ~ eq ~ CapturedKeyword ~> ColumnPrefix |
+      Keywords.ColumnLimit ~ eq ~ capture(oneOrMore(CharPredicate.Digit)) ~> (x => ColumnCountGet(x.toInt)) |
+      Keywords.PageCount ~ eq ~ capture(oneOrMore(CharPredicate.Digit)) ~> (y => Page(y.toInt)) |
+      Keywords.StopRow ~ eq ~ CapturedKeyword ~> InclusiveStop |
+      Keywords.ColName ~ ws ~ OpExpr ~ ws ~ FieldName ~> Qualifier |
+      Keywords.ColValue ~ ws ~ OpExpr ~ ws ~ (QuotedText | CapturedKeyword) ~> Value
+  }
+
+
+
+  private[this] def eq = rule {
+    ws ~ oneOrMore(anyOf("=")) ~ ws
+  }
+
+  private[this] def ComaSeparatedKeywords = rule {
+    openBracket ~ oneOrMore(CapturedKeyword ~ zeroOrMore(',')) ~ closeBracket
   }
 
   private[this] def OpExpr: Rule1[CompareOp] = rule {
@@ -42,15 +65,15 @@ class FilterParser(val input: ParserInput) extends Parser {
   }
 
   private[this] def FieldName: Rule1[Column] = rule {
-    Keyword ~ ":" ~ Keyword ~> Column
+    CapturedKeyword ~ ":" ~ CapturedKeyword ~> Column
   }
 
-  private[this] def Keyword: Rule1[String] = rule {
+  private[this] def CapturedKeyword: Rule1[String] = rule {
     zeroOrMore(Quote) ~ capture(oneOrMore(CharPredicate.AlphaNum | anyOf("_"))) ~ zeroOrMore(Quote)
   }
 
   private[this] def QuotedText: Rule1[String] = rule {
-    Quote ~ capture(oneOrMore(CharPredicate.All -- '"' | EscapedQuote)) ~ Quote | Keyword
+    Quote ~ capture(oneOrMore(CharPredicate.All -- '"' | EscapedQuote)) ~ Quote | CapturedKeyword
   }
 
   private[this] def EscapedQuote = "\\\""
@@ -97,4 +120,18 @@ object FilterParser {
       }
     }
   }
+
+  object Keywords {
+    val Key = "key"
+    val FirstKey = "first_key"
+    val RowPrefix = "row_prefix"
+    val ColumnPrefix = "column_prefix"
+    val ColumnLimit = "column_limit"
+    val RowLimit = "row_limit"
+    val PageCount = "page_count"
+    val StopRow = "stop_row"
+    val ColName = "column_name"
+    val ColValue = "column_value"
+  }
+
 }

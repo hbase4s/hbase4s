@@ -29,7 +29,7 @@ class ShapelessUtilsTest extends FlatSpec with Matchers {
       Field[Array[Byte]]("foo", "str", "STRI"),
       Field[Array[Byte]]("foo", "b", true)
     )
-    typed[Foo](hbaseFields).asClass shouldBe Some(foo)
+    typed[Foo](hbaseFields).asClass shouldBe foo
   }
 
 }

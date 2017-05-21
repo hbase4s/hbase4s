@@ -42,8 +42,8 @@ object RecordFactory {
   class FromListToCC[T: TypeTag](fields: List[Field[Array[Byte]]]) {
 
     // magic below: http://stackoverflow.com/questions/33840564/converting-a-list-to-a-case-class
-    def asClass[R <: HList](implicit gen: Generic.Aux[T, R], tl: FromTraversable[R]): Option[T] = {
-      tl(asList).map(gen.from)
+    def  asClass[R <: HList](implicit gen: Generic.Aux[T, R], tl: FromTraversable[R]): T = {
+      tl(asList).map(gen.from).getOrElse(sys.error(s"Unable to extract class from list of fields: $fields"))
     }
 
     def asList: List[Any] = {
