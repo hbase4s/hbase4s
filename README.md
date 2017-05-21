@@ -1,5 +1,8 @@
 # HBase4s
 
+[![Build Status](https://travis-ci.org/vglushak-vt/hbase4s.svg?branch=develop)](https://travis-ci.org/vglushak-vt/hbase4s)
+
+
 Scala wrapper around HBase client library that provides user-friendly type-safe API and query language to work with HBase database.
   
 HBase client has extended powerful API with huge amount of different sophisticated options.
