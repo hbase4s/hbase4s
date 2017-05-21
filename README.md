@@ -60,13 +60,15 @@ object Example {
   // two version of querying data from HBase table
   // results are represented as List of Event class
   // string-based DSL
-  val e1 = client.scan[String]("(event:description = \"oh-oh\") AND (event:index > int(18))").map(x => x.typed[Event].asClass)
+  val e1 = client.scan[String](
+    "(event:description = \"oh-oh\") AND (event:index > int(18))"
+  ).map(_.typed[Event].asClass)
 
   // scala static type DSL
   import hbase4s.filter.FilterDsl._
   val e2 = client.scan[String](
     c("event", "description") === "oh-oh" & c("event", "index") > 18
-  ).map(x => x.typed[Event].asClass)
+  ).map(_.typed[Event].asClass)
   
   require(e1 == e2)
 

@@ -25,7 +25,7 @@ class GettingStartedTest extends FlatSpec with Matchers {
 
   "Sample" should "show how to work with HBase" in {
     val e = Event(546, 10L, enabled = true, "oh-oh")
-    val rowId = "oh-oh-event"
+    val rowId = "oh-event-id-string"
 
     // store case class in hbase table, under provided columns family
     client.put(rowId, e)
@@ -38,13 +38,15 @@ class GettingStartedTest extends FlatSpec with Matchers {
     // two version of querying data from HBase table
     // results are represented as List of Event class
     // string-based DSL
-    val e1 = client.scan[String]("(event:description = \"oh-oh\") AND (event:index > int(18))").map(x => x.typed[Event].asClass)
+    val e1 = client.scan[String](
+      "(event:description = \"oh-oh\") AND (event:index > int(18))"
+    ).map(_.typed[Event].asClass)
 
     // scala static type DSL
     import hbase4s.filter.FilterDsl._
     val e2 = client.scan[String](
       c("event", "description") === "oh-oh" & c("event", "index") > 18
-    ).map(x => x.typed[Event].asClass)
+    ).map(_.typed[Event].asClass)
 
     e2 shouldBe List(e)
     e2 shouldBe e1
