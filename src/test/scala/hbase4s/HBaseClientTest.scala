@@ -73,12 +73,12 @@ class HBaseClientTest extends FlatSpec with Matchers {
 
   "It" should "allow to put, get, filter, delete" in {
     val e = Event(1, 10L, enabled = true, "oh-oh")
-    val row_id = "oh-oh-event"
-    dsl.put(row_id, e)
-    dsl.get(row_id).map(_.typed[Event].asClass) shouldBe Some(e)
+    val rowId = "oh-oh-event"
+    dsl.put(rowId, e)
+    dsl.get(rowId).map(_.typed[Event].asClass) shouldBe Some(e)
     dsl.scan[String]("event:description = \"oh-oh\"").map(x => x.typed[Event].asClass) shouldBe List(e)
-    dsl.delete(row_id)
-    dsl.get(row_id).map(_.typed[Event].asClass) shouldBe None
+    dsl.delete(rowId)
+    dsl.get(rowId).map(_.typed[Event].asClass) shouldBe None
     dsl.scan[String]("event:description = \"oh-oh\"").map(x => x.typed[Event].asClass) shouldBe List()
   }
 }

@@ -1,14 +1,11 @@
 package hbase4s.filter
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.slf4j.LoggerFactory
+import hbase4s.filter.FilterDsl._
 
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.
   */
-class ColumnBasedFilterBuilderTest extends FlatSpec with Matchers {
-
-  private[this] val logger = LoggerFactory.getLogger(getClass)
+class ColumnBasedFilterBuilderTest extends AbstractFilterTest {
 
   private[this] val sName = "family:column"
   private[this] val sVal = "12345"
@@ -25,11 +22,12 @@ class ColumnBasedFilterBuilderTest extends FlatSpec with Matchers {
 
   "All variants of single expression" should "be transformed" in {
     singleColVariance.foreach { scf =>
-      val value = parseOrFailOnErr(scf) match {
+      parseOrFailOnErr(scf) match {
         case SingleColVal(col, op, v, _) =>
           op shouldBe Eq
           col shouldBe Column("family", "column")
           v should be("12345")
+        case x => fail(s"Incorrectly parsed expression $scf -> $x.")
       }
     }
   }
@@ -51,17 +49,7 @@ class ColumnBasedFilterBuilderTest extends FlatSpec with Matchers {
   }
 
   "Int value type" should "be treated as non-string" in {
-    import FilterDsl._
     FilterParser.parse("family:column == int(18)") shouldBe (c("family", "column") === 18)
-  }
-
-  private[this] def parseOrFailOnErr[T](scf: String) = {
-    try {
-      FilterParser.parse(scf)
-    } catch {
-      case ex: Throwable =>
-        fail(s"Failed to process $scf", ex)
-    }
   }
 
 }

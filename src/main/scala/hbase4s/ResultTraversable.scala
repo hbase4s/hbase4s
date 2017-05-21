@@ -6,6 +6,6 @@ package hbase4s
 class ResultTraversable[K](data: Map[K, List[Field[Array[Byte]]]]) extends Traversable[WrappedResult[K]] {
 
   override def foreach[U](f: WrappedResult[K] => U): Unit = {
-    data.foreach { x => f(WrappedResult(x._1, x._2)) }
+    data.foreach { case (k, d) => f(WrappedResult(k, d)) }
   }
 }

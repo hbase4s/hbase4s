@@ -33,7 +33,9 @@ case class WrappedResult[K](key: K, data: List[Field[Array[Byte]]]) {
   def asBigDecimal(name: String) = hbf.asBigDecimal(get(name))
 
   @deprecated
-  def allAsString: Map[String, Field[String]] = cache.map(f => f._1 -> f._2.copy(value = hbf.asString(f._2.value)))
+  def allAsString: Map[String, Field[String]] = cache.map {
+    case (id, fields) => id -> fields.copy(value = hbf.asString(fields.value))
+  }
 
   def typed[T: TypeTag]: FromListToCC[T] = RecordFactory.typed[T](data)
 
