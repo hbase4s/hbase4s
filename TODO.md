@@ -20,7 +20,7 @@ Complexity: NORMAL
 2. Provide Admin implementation to perform DDL operation in HBase and manage cluster.
 Complexity: HIGH
 
-3. Generate API doc, to be done as soon as stabilized.
+3. Generate API docs(to be done as soon as stabilized).
 
 4. Setup coverage with coverall.
 
@@ -41,3 +41,14 @@ It will allow extract data in respective types.
 User receives transformed data to specific type, but not `byte[]`
 Also, it could simplify query language, as currently with type specific search I have to pass data type to filter.
 Downside: not possible to use if data stored with different library, also more space used in DB.
+
+2. Implement salting option of row key on put to prevent hotspotting.
+ Adding two random letters before each row-key will guarantee evenly-distributed data across the cluster
+ (two letters - around 1000 combinations - nodes).
+ Put method has to return generated key. Salt should be a hash function of existing row key.
+ Salt mechanism can be applied inside each method (get,delete,put etc.), so user will never no about it.
+ Salt mechanism should be enabled/disable on HBaseClient level (and applied automatically for all methods if enabled).
+ Problem - won't be able to search for "startWith"???
+
+3. HBase documentation recommends to have short family name and the same applied for column names,
+because all this data is stored quite in HBase for each record.
