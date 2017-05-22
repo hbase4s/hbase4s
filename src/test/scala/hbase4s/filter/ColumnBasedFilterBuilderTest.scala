@@ -44,12 +44,12 @@ class ColumnBasedFilterBuilderTest extends AbstractFilterTest {
 
   "Invalid filters" should "be treated user-friendly" in {
     intercept[RuntimeException] {
-      FilterParser.parse("column_aaa == 18")
+      "column_aaa == 18".f
     }
   }
 
   "Int value type" should "be treated as non-string" in {
-    FilterParser.parse("family:column == int(18)") shouldBe (c("family", "column") === 18)
+    "family:column == int(18)".f shouldBe (c("family", "column") === 18)
   }
 
 }

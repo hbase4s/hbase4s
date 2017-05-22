@@ -81,6 +81,38 @@ class HBaseClientTest extends FlatSpec with Matchers {
     dsl.get(rowId).map(_.typed[Event].asClass) shouldBe None
     dsl.scan[String]("event:description = \"oh-oh\"").map(x => x.typed[Event].asClass) shouldBe List()
   }
+
+  "Custom filters" should "return correct results" in {
+
+    val testData = Event(1, 1L, enabled = true, "default")
+    (1 to 1000).foreach { x =>
+      dsl.put(x, testData.copy(index = x, id = 10L * x, description = s"Some Text #$x"))
+    }
+
+    def search(q: String) = dsl.scan[Int](q).map(wr => wr.typed[Event].asClass).toList
+
+    def searchStr(q: String) =
+
+      search("(event:id < long(100))").size shouldBe 9
+
+    val res2 = search("(event:id > long(120)) AND (page_count == 5)")
+    res2.size shouldBe 5
+    res2.headOption.map { ev => ev.id shouldBe 140L }
+
+    dsl.scan[Int](
+      "(column_prefix == i) AND (page_count == 1)"
+    ).map(wr => wr.allColumnNames).toList shouldBe List(List("event:id", "event:index"))
+
+    dsl.scan[Int]("(column_name == enabled) AND (page_count ==1)").map(
+      wr => wr.allColumnNames
+    ).toList shouldBe List(List("event:enabled"))
+
+    dsl.scan[Int]("column_value == long(240)").map(
+      wr => wr.allColumnNames
+    ).toList shouldBe List(List("event:id"))
+
+
+  }
 }
 
 case class Event(index: Int, id: Long, enabled: Boolean, description: String)

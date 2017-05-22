@@ -12,9 +12,9 @@ case class WrappedResult[K](key: K, data: List[Field[Array[Byte]]]) {
 
   private[this] val cache = data.map(f => s"${f.family}:${f.name}" -> f).toMap
 
-  def allColumns: List[String] = cache.keys.toList
+  def allColumnNames: List[String] = cache.keys.toList
 
-  private[this] def get(name: String) = cache.getOrElse(name, sys.error(s"Column $name not found. Available columns $allColumns")).value
+  private[this] def get(name: String) = cache.getOrElse(name, sys.error(s"Column $name not found. Available columns $allColumnNames")).value
 
   def asString(name: String): String = hbf.asString(get(name))
 
@@ -32,7 +32,7 @@ case class WrappedResult[K](key: K, data: List[Field[Array[Byte]]]) {
 
   def asBigDecimal(name: String) = hbf.asBigDecimal(get(name))
 
-  @deprecated
+  @deprecated // TODO: should it be part of API? No - non String fields will contain invalid values.
   def allAsString: Map[String, Field[String]] = cache.map {
     case (id, fields) => id -> fields.copy(value = hbf.asString(fields.value))
   }

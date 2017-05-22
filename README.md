@@ -111,5 +111,22 @@ However, it provides Filter API, that allows `scan` tables individually (no join
 
 HBase4s provide two version of DSL: string based (whole filter is represented as string) or Scala DSL based (set of scala classes).
 
+Supported filters in different DSLs with brief description.
+
+Scala DSL|String DSL | Description 
+----------------------------|----------------------------|----------------------------
+`keys`|`"key".f`|returns only the key component of each key-value
+`firstKeys` | `"first_key".f` |  returns only the first key-value from each row
+`rowPrefix is "row_id_1"` | `"row_prefix == row_id_1".f` | Returns only rows that starts with specific prefix 
+`columnPrefix is "col_name_a"` | `"column_prefix == col_name_a".f` |  Returns only columns that start with specific prefix
+`columnPrefix in("col_a", "col_b")` | `"column_prefix == (col_a, col_b)".f` | The same as above
+`columnLimit === 10` | `"column_limit == 10".f` | Returns only limited amount of columns in the table
+`pageLimit === 10` | `"page_count == 10".f` | Returns limited amount of rows(pages) 
+`stop on "row_id_181"` | `"stop_row == row_id_181".f` | Returns result when meet row with id as in filter (inclusive)
+`columnName is "col_name_a"` | `"column_name == col_name_a".f` | Returns all columns with specified qualifier (without family name)
+`columnValue is "some_value_b"` | `"column_value == some_value_b".f` | Returns all columns with specified value
+`c("event", "name") === "Henry VIII"` | `"event:name == \"Henry VIII\"".f` | Returns rows that have column with specified value
+`keys & pageLimit === 2` | `"key AND (page_count == 2)".f` | And condition
+```(rowPrefix is "r_a") / (columnPrefix is "c_b")``` | `"(row_prefix == r_a) OR (column_prefix == c_b)".f` | Or condition
 
 

@@ -1,25 +1,34 @@
 ### Tasks. MVP
 
-1. Add documentation to README regarding query language and API (put, scan, delete, get). 
-Example added. Should add full API description. To do later on.
+1. README. Basic documentation added. Review and make sure it's enough to getting started.
 
+2. Publish binary and add info to getting starting of how to use this lib in clients project.
 
-2. Extend filter support with some basic filters. 
-Some filters left to fix (should it goes to below section)
-I've incorrectly treat prefix in value based filters (it's related to data type). 
-Issue related to #2 - I should use the same approach for both this issues.
+3. README. Describe how to extend library (how to extend HBase client, parser?)
 
-3. Setup gitter chat.
+4. There is inconsistency between scala DSL and string based DSL in names. 
+It would be good to use the same names. 
 
 ### Tasks. Others
 
 1. Extend filter support to cover all possible HBase filters and support all (most) options for each filter.
+Complexity: NORMAL
 
 2. Provide Admin implementation to perform DDL operation in HBase and manage cluster.
+Complexity: HIGH
 
-3. Generate API doc.
+3. Generate API doc, to be done as soon as stabilized.
 
 4. Setup coverage with coverall.
+
+5. Add support of custom types (for filters, and case class mappings).
+Complexity: HIGH
+
+6. Add support of Option as Event field (if relevant column was not found in table populate with None).
+Complexity: HIGH
+
+7. Setup gitter chat.
+
 
 ### Ideas
 

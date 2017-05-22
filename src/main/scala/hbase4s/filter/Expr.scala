@@ -64,7 +64,7 @@ case class InclusiveStop(rk: String) extends Expr
   * @param cp compare operator
   * @param q comparator - column qualifier to compare
   */
-case class Qualifier(cp: CompareOp, q: Column) extends Expr
+case class Qualifier(cp: CompareOp, q: String) extends Expr
 
 
 /**
@@ -73,7 +73,7 @@ case class Qualifier(cp: CompareOp, q: Column) extends Expr
   * @param cp compare operator
   * @param q comparator - column value to compare
   */
-case class Value(cp: CompareOp, q: String) extends Expr
+case class Value[T](cp: CompareOp, q: T) extends Expr
 
 /**
   * If the column is found and the comparison with the comparator returns true, all the columns of the row will be emitted.

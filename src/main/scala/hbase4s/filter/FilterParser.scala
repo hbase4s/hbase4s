@@ -46,8 +46,8 @@ class FilterParser(val input: ParserInput) extends Parser {
       Keywords.ColumnLimit ~ eq ~ Int ~> (x => ColumnCountGet(x.toInt)) |
       Keywords.PageCount ~ eq ~ Int ~> (y => Page(y.toInt)) |
       Keywords.StopRow ~ eq ~ CapturedKeyword ~> InclusiveStop |
-      Keywords.ColName ~ ws ~ OpExpr ~ ws ~ FieldName ~> Qualifier |
-      Keywords.ColValue ~ ws ~ OpExpr ~ ws ~ (QuotedText | CapturedKeyword) ~> Value
+      Keywords.ColName ~ ws ~ OpExpr ~ ws ~ CapturedKeyword ~> Qualifier |
+      Keywords.ColValue ~ ws ~ OpExpr ~ ws ~ (TypedExpr | QuotedText | CapturedKeyword) ~> ((a: CompareOp, b: Any) => Value(a, b))
   }
 
 
@@ -64,7 +64,7 @@ class FilterParser(val input: ParserInput) extends Parser {
   }
 
   private[this] def ComaSeparatedKeywords = rule {
-    openBracket ~ oneOrMore(CapturedKeyword ~ zeroOrMore(',')) ~ closeBracket
+    openBracket ~ oneOrMore(CapturedKeyword ~ ws ~ zeroOrMore(',') ~ ws) ~ closeBracket
   }
 
   private[this] def OpExpr: Rule1[CompareOp] = rule {

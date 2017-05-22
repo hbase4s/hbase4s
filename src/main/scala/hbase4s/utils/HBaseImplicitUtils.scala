@@ -1,7 +1,8 @@
 package hbase4s.utils
 
-import scala.reflect.runtime.universe._
 import org.apache.hadoop.hbase.util.Bytes
+
+import scala.reflect.runtime.universe._
 
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.

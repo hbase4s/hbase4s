@@ -1,8 +1,8 @@
 package hbase4s.utils
 
+import hbase4s.Field
 import hbase4s.RecordFactory._
 import hbase4s.utils.HBaseImplicitUtils._
-import hbase4s.{Field, RecordFactory}
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.HNil
 
@@ -14,7 +14,7 @@ class ShapelessUtilsTest extends FlatSpec with Matchers {
 
   case class Foo(i: Int, str: String, b: Boolean)
 
-  val foo = Foo(23, "STRI", true)
+  val foo = Foo(23, "STRI", b = true)
 
   "It" should "build case class from HList" in {
 

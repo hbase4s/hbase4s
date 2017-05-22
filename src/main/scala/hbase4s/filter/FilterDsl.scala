@@ -36,11 +36,36 @@ object FilterDsl {
   def firstKeys = FirstKeyOnly
 
   object rowPrefix {
-    def ===(s: String) = RowPrefix(s)
+    def is(s: String) = RowPrefix(s)
   }
 
   object columnPrefix {
-    def ===(s: String) = ColumnPrefix(s)
+    def is(s: String) = ColumnPrefix(s)
+
+    def in(ss: String*) = MultipleColumnPrefix(ss)
+  }
+
+  object columnLimit {
+    def ===(i: Int) = ColumnCountGet(i)
+  }
+
+  object pageLimit {
+    def ===(i: Int) = Page(i)
+  }
+
+  object stop {
+    def on(s: String) = InclusiveStop(s)
+  }
+  object columnName {
+    def is(s: String) = Qualifier(Eq, s)
+  }
+
+  object columnValue {
+    def is(s: String) = Value(Eq, s)
+  }
+
+  implicit class FilterStr(s: String) {
+    def f: Expr = FilterParser.parse(s)
   }
 
 }

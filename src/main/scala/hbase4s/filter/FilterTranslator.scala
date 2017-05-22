@@ -28,9 +28,8 @@ object FilterTranslator {
     case ColumnCountGet(i) => new ColumnCountGetFilter(i)
     case Page(p) => new PageFilter(p)
     case InclusiveStop(r) => new InclusiveStopFilter(r)
-    // TODO: prefix is smth else - those filters need to be revisited...
-    // case Qualifier(op, q) => new QualifierFilter(compareOpHbase(op), q)
-    // case Value(op, q) => new ValueFilter(compareOpHbase(op), q)
+    case Qualifier(op, q) => new QualifierFilter(compareOpHbase(op), new BinaryComparator(q))
+    case Value(op, q) => new ValueFilter(compareOpHbase(op), new BinaryComparator(anyToBytes(q)))
 
     case SingleColVal(col, op, v, ifMissing) =>
       val scvf = new SingleColumnValueFilter(col.family, col.name, compareOpHbase(op), anyToBytes(v))
