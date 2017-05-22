@@ -49,7 +49,7 @@ case class ColumnCountGet(l: Int) extends Expr
   * It returns page size number of rows from the table.
   * @param l page size
   */
-case class Page(l: Int) extends Expr
+case class Page(l: Long) extends Expr
 
 /**
   * Filter returns all key-values present in rows up to and including the specified row.

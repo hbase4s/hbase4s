@@ -44,7 +44,7 @@ class FilterParser(val input: ParserInput) extends Parser {
       Keywords.ColumnPrefix ~ eq ~ ComaSeparatedKeywords ~> MultipleColumnPrefix |
       Keywords.ColumnPrefix ~ eq ~ CapturedKeyword ~> ColumnPrefix |
       Keywords.ColumnLimit ~ eq ~ Int ~> (x => ColumnCountGet(x.toInt)) |
-      Keywords.PageCount ~ eq ~ Int ~> (y => Page(y.toInt)) |
+      Keywords.PageCount ~ eq ~ Int ~> (y => Page(y.toLong)) |
       Keywords.StopRow ~ eq ~ CapturedKeyword ~> InclusiveStop |
       Keywords.ColName ~ ws ~ OpExpr ~ ws ~ CapturedKeyword ~> Qualifier |
       Keywords.ColValue ~ ws ~ OpExpr ~ ws ~ (TypedExpr | QuotedText | CapturedKeyword) ~> ((a: CompareOp, b: Any) => Value(a, b))

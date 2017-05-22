@@ -1,7 +1,5 @@
 package hbase4s.filter
 
-import hbase4s.filter._
-
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.
   */
@@ -16,7 +14,7 @@ class AllFilterBuilderTest extends AbstractFilterTest {
     parseOrFailOnErr("column_prefix == name2") shouldBe ColumnPrefix("name2")
     parseOrFailOnErr("column_prefix == (name2,name3,name4)") shouldBe MultipleColumnPrefix(List("name2", "name3", "name4"))
     parseOrFailOnErr("column_limit == 5") shouldBe ColumnCountGet(5)
-    parseOrFailOnErr("page_count = 2") shouldBe Page(2)
+    parseOrFailOnErr("page_count = 2") shouldBe Page(2L)
     parseOrFailOnErr("stop_row = row7") shouldBe InclusiveStop("row7")
     parseOrFailOnErr("column_name == date") shouldBe Qualifier(Eq, "date")
     parseOrFailOnErr("column_value == some") shouldBe Value(Eq, "some")
