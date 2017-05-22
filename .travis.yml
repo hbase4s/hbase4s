@@ -4,13 +4,12 @@ language: scala
 before_script: travis_retry sbt -Dinclude.from.github=true ++$TRAVIS_SCALA_VERSION update
 
 script:
-  - sbt -Dinclude.from.github=true ++$TRAVIS_SCALA_VERSION clean test
-# - sbt -Dinclude.from.github=true ++$TRAVIS_SCALA_VERSION clean coverage test
-#after_success:
-#  - sbt coverageReport
-#  - sbt coverageAggregate
-#  - sbt codacyCoverage
-#  - sbt coveralls
+  - sbt -Dinclude.from.github=true ++$TRAVIS_SCALA_VERSION clean coverage test
+after_success:
+  - sbt coverageReport
+  - sbt coverageAggregate
+  - sbt codacyCoverage
+  - sbt coveralls
 
 scala:
   - 2.11.8
