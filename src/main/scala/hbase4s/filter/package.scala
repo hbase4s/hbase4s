@@ -1,9 +1,9 @@
-package hbase4s.filter
+package hbase4s
 
 /**
-  * Created by Volodymyr.Glushak on 21/05/2017.
+  * Created by Volodymyr.Glushak on 22/05/2017.
   */
-object FilterDsl {
+package object filter {
 
   def c(fam: String, name: String) = Column(fam, name)
 
@@ -56,6 +56,7 @@ object FilterDsl {
   object stop {
     def on(s: String) = InclusiveStop(s)
   }
+
   object columnName {
     def is(s: String) = Qualifier(Eq, s)
   }

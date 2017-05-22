@@ -19,11 +19,10 @@ Note: raise an issue if some of basic functionality was missed
 
 ## Getting started
 
-Before starting, note!
-This is not production ready library. It's currently under active development. 
+Note! This is not production ready library. It's currently under active development. 
 Provided API can be changed from version to version without providing backward compatibility.
 
-It's recommended to get familiar with library by pulling it locally and lookgin closely into existent tests.
+It's recommended to get familiar with library by pulling it locally and looking closely into existent tests.
 They cover most of relevant business cases that are implemented in library.
 
 Below is provided set of basic examples of establishing connection to HBase database, storing data to table, 
@@ -32,12 +31,11 @@ extracting it in different way and removing.
 ```scala
 // hbase4s.GettingStartedTest
 
-package hbase4s
-
+import hbase4s._
 import hbase4s.config.HBaseDefaultConfig
 import hbase4s.utils.HBaseImplicitUtils._
 
-object Example {
+object Example1 {
 
   case class Event(index: Int, id: Long, enabled: Boolean, description: String)
 
@@ -45,7 +43,7 @@ object Example {
   val Table = "transactions"
   val Family = "event"
 
-  // establish connection to HBase server, point HBaseClient to work with transactions table
+  // establish connection to HBase server, point HBaseClient to work with "transactions" table
   val client = new HBaseClient(new HBaseConnection(new HBaseDefaultConfig), Table)
 
   val e = Event(546, 10L, enabled = true, "oh-oh")
@@ -65,7 +63,7 @@ object Example {
   ).map(_.typed[Event].asClass)
 
   // scala static type DSL
-  import hbase4s.filter.FilterDsl._
+  import hbase4s.filter._
   val e2 = client.scan[String](
     c("event", "description") === "oh-oh" & c("event", "index") > 18
   ).map(_.typed[Event].asClass)
@@ -77,7 +75,7 @@ object Example {
 }
 ```
 
-## CRUD
+## Background
 
 HBase does not support data types. All columns and row key are stored as array of `bytes`. 
 Java HBase client works with the same single data structure. 
@@ -129,4 +127,63 @@ Scala DSL|String DSL | Description
 `keys & pageLimit === 2` | `"key AND (page_count == 2)".f` | And condition
 ```(rowPrefix is "r_a") / (columnPrefix is "c_b")``` | `"(row_prefix == r_a) OR (column_prefix == c_b)".f` | Or condition
 
+## Custom types
 
+Getting started section cover the case of automatical Object Relational Mapping via case classes for some standard data types.
+As mentioned above HBase required values to be bytes array. 
+Below is the sample of storing custom types.
+
+```scala
+
+import hbase4s._
+import hbase4s.config.HBaseDefaultConfig
+import hbase4s.utils.HBaseImplicitUtils._
+import java.text.SimpleDateFormat
+import java.util.{Date, TimeZone}
+import hbase4s.filter._
+
+object Example2 {
+
+    // expected table "dates_table" exists with column family "event"
+  val client = new HBaseClient(new HBaseConnection(new HBaseDefaultConfig), "dates_table")
+
+
+    val id = "row_id_1"
+    // records with just one field - date
+    // create list of columns (fields) manually, providing family and name
+    // value has to be array of bytes or one of supported type
+    val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
+    sdf.setTimeZone(TimeZone.getDefault)
+    val date = sdf.format(new Date)
+    val dateField = Field("event", "create_date", asBytes(date))
+    
+    client.putFields(id, List(dateField))
+    
+    val outDate = client.scan[String](c("event", "create_date") === date).map { wr =>
+      wr.asString("event:create_date")
+    }.head
+    
+    require(date == outDate)
+    println(sdf.parse(outDate))
+}
+```
+
+Basically, there are two options.
+
+1. Transform it manually to byte array. 
+The downside of this approach is: search columns won't be searchable with string based DSL.
+Filter parser will not know how to transform those custom types to byte array and won't be able to match values.
+Option: use scala API.
+
+2. Transform it to one of supported data types. As shown in example above date can be easily represented and stored as String.
+
+Another point to note while work with custom fields, there might be necessity to implement custom comparator in case of some specific comparison operations (Less, GreaterOrEq).
+
+## Contributing
+
+Any help appreciated. User are welcome to try, raise issue or create pull request.
+
+
+## License
+
+Source code and binaries are published under Apache License, Version 2.0

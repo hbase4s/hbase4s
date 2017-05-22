@@ -1,6 +1,6 @@
 package hbase4s.filter
 
-import hbase4s.filter.FilterDsl._
+import hbase4s.filter._
 
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.

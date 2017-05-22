@@ -1,9 +1,13 @@
 package hbase4s
 
+import java.text.SimpleDateFormat
+import java.util.{Date, TimeZone}
+
 import hbase4s.config.HBaseExternalConfig
 import hbase4s.utils.HBaseTesting
 import org.scalatest.{FlatSpec, Matchers}
 import hbase4s.utils.HBaseImplicitUtils._
+import hbase4s.filter._
 
 /**
   * Created by Volodymyr.Glushak on 21/05/2017.
@@ -20,10 +24,10 @@ class GettingStartedTest extends FlatSpec with Matchers {
 
   case class Event(index: Int, id: Long, enabled: Boolean, description: String)
 
-  // establish connection to HBase server, point HBaseClient to work with transactions table
+  // establish connection to HBase server, point HBaseClient to work with "transactions" table
   val client = new HBaseClient(new HBaseConnection(new HBaseExternalConfig(utility.getConfiguration)), Table)
 
-  "Sample" should "show how to work with HBase" in {
+  "Sample 1" should "show how to work with library using case classes" in {
     val e = Event(546, 10L, enabled = true, "oh-oh")
     val rowId = "oh-event-id-string"
 
@@ -43,7 +47,6 @@ class GettingStartedTest extends FlatSpec with Matchers {
     ).map(_.typed[Event].asClass)
 
     // scala static type DSL
-    import hbase4s.filter.FilterDsl._
     val e2 = client.scan[String](
       c("event", "description") === "oh-oh" & c("event", "index") > 18
     ).map(_.typed[Event].asClass)
@@ -53,5 +56,26 @@ class GettingStartedTest extends FlatSpec with Matchers {
 
     // remove by key
     client.delete(rowId)
+  }
+
+  "Sample 2" should "show how to work with custom data types" in {
+
+    val id = "row_id_1"
+    // records with just one field - date
+    // create list of columns (fields) manually, providing family and name
+    // value has to be array of bytes or one of supported type
+    val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
+    sdf.setTimeZone(TimeZone.getDefault)
+    val date = sdf.format(new Date)
+    val dateField = Field("event", "create_date", asBytes(date))
+
+    client.putFields(id, List(dateField))
+
+    val outDate = client.scan[String](c("event", "create_date") === date).map { wr =>
+      wr.asString("event:create_date")
+    }.head
+
+    require(date == outDate)
+    println(sdf.parse(outDate))
   }
 }
