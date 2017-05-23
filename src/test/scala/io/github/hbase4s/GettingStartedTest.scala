@@ -1,13 +1,13 @@
-package hbase4s
+package io.github.hbase4s
 
 import java.text.SimpleDateFormat
 import java.util.{Date, TimeZone}
 
-import hbase4s.config.HBaseExternalConfig
-import hbase4s.utils.HBaseTesting
+import io.github.hbase4s.config.HBaseExternalConfig
+import io.github.hbase4s.utils.HBaseTesting
 import org.scalatest.{FlatSpec, Matchers}
-import hbase4s.utils.HBaseImplicitUtils._
-import hbase4s.filter._
+import io.github.hbase4s.utils.HBaseImplicitUtils._
+import io.github.hbase4s.filter._
 
 /**
   * Created by Volodymyr.Glushak on 21/05/2017.

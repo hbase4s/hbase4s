@@ -1,4 +1,4 @@
-package hbase4s.utils
+package io.github.hbase4s.utils
 
 import org.apache.hadoop.hbase.HBaseTestingUtility
 

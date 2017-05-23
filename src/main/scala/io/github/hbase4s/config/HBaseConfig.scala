@@ -1,4 +1,4 @@
-package hbase4s.config
+package io.github.hbase4s.config
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.HBaseConfiguration

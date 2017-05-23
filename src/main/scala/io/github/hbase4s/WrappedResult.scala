@@ -1,7 +1,7 @@
-package hbase4s
+package io.github.hbase4s
 
-import hbase4s.RecordFactory.FromListToCC
-import hbase4s.utils.{HBaseImplicitUtils => hbf}
+import io.github.hbase4s.RecordFactory.FromListToCC
+import io.github.hbase4s.utils.{HBaseImplicitUtils => hbf}
 
 import scala.reflect.runtime.universe._
 

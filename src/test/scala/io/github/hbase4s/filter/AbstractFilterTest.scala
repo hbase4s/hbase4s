@@ -1,4 +1,4 @@
-package hbase4s.filter
+package io.github.hbase4s.filter
 
 import org.scalatest.{FlatSpec, Matchers}
 import org.slf4j.{Logger, LoggerFactory}

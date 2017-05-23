@@ -1,4 +1,4 @@
-package hbase4s
+package io.github.hbase4s
 
 /**
   * Created by Volodymyr.Glushak on 22/05/2017.

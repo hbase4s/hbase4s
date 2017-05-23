@@ -1,4 +1,4 @@
-package hbase4s.filter
+package io.github.hbase4s.filter
 
 /**
   * Created by Volodymyr.Glushak on 11/05/2017.

@@ -1,8 +1,8 @@
-package hbase4s
+package io.github.hbase4s
 
-import hbase4s.config.HBaseExternalConfig
-import hbase4s.utils.HBaseImplicitUtils._
-import hbase4s.utils.HBaseTesting
+import io.github.hbase4s.config.HBaseExternalConfig
+import io.github.hbase4s.utils.HBaseImplicitUtils._
+import io.github.hbase4s.utils.HBaseTesting
 import org.scalatest.{FlatSpec, Matchers}
 
 /**

@@ -1,7 +1,7 @@
-package hbase4s.filter
+package io.github.hbase4s.filter
 
 
-import hbase4s.utils.HBaseImplicitUtils._
+import io.github.hbase4s.utils.HBaseImplicitUtils._
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp._
 import org.apache.hadoop.hbase.filter._
 

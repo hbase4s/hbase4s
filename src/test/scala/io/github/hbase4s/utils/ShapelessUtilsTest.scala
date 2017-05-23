@@ -1,8 +1,8 @@
-package hbase4s.utils
+package io.github.hbase4s.utils
 
-import hbase4s.Field
-import hbase4s.RecordFactory._
-import hbase4s.utils.HBaseImplicitUtils._
+import io.github.hbase4s.Field
+import io.github.hbase4s.RecordFactory._
+import io.github.hbase4s.utils.HBaseImplicitUtils._
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.HNil
 

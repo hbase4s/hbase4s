@@ -10,7 +10,12 @@ It's mandatory, as currently there are no full support for existing HBase API (e
 4. There is inconsistency between scala DSL and string based DSL in names. 
 It would be good to use the same names. 
 
-5. Make common API DSL wrappers available through package object hbase4s._ 
+5. Make common API DSL wrappers available through package object io.github.hbase4s._ 
+
+6. Move everything to package io.github.io.github.hbase4s
+ 
+7. Configure artifact publishing 
+http://www.scala-sbt.org/release/docs/Using-Sonatype.html 
 
 ### Tasks. Others
 

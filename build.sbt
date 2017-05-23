@@ -13,7 +13,7 @@ lazy val hbase4s = (project in file("."))
   .settings(
     scalaVersion := "2.11.8",
     name := "hbase4s-core",
-    moduleName := "hbase4s-core",
+    moduleName := "io.github.hbase4s",
     scalacOptions in ThisBuild ++= Seq(
       "-language:experimental.macros",
       "-target:jvm-1.8",

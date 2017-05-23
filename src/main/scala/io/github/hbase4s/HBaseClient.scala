@@ -1,8 +1,8 @@
-package hbase4s
+package io.github.hbase4s
 
-import hbase4s.config.HBaseConfig
-import hbase4s.filter.{FilterParser, FilterTranslator}
-import hbase4s.utils.HBaseImplicitUtils._
+import io.github.hbase4s.config.HBaseConfig
+import io.github.hbase4s.filter.{FilterParser, FilterTranslator}
+import io.github.hbase4s.utils.HBaseImplicitUtils._
 import org.apache.hadoop.hbase.client._
 import org.apache.hadoop.hbase.filter.Filter
 import org.apache.hadoop.hbase.{Cell, CellUtil, TableName}

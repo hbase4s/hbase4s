@@ -1,6 +1,6 @@
-package hbase4s.filter
+package io.github.hbase4s.filter
 
-import hbase4s.filter.FilterParser._
+import io.github.hbase4s.filter.FilterParser._
 import org.parboiled2._
 
 import scala.util.{Failure, Success}

@@ -1,15 +1,15 @@
 # HBase4s
 
-[![Build Status](https://travis-ci.org/vglushak-vt/hbase4s.svg?branch=develop)](https://travis-ci.org/vglushak-vt/hbase4s)
-[![Coverage Status](https://coveralls.io/repos/github/vglushak-vt/hbase4s/badge.svg?branch=develop)](https://coveralls.io/github/vglushak-vt/hbase4s?branch=develop)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0092dd676154718af28f83f5309efd2)](https://www.codacy.com/app/vglushak-vt/hbase4s?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=vglushak-vt/hbase4s&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/vglushak-vt/io.github.hbase4s.svg?branch=develop)](https://travis-ci.org/vglushak-vt/io.github.hbase4s)
+[![Coverage Status](https://coveralls.io/repos/github/vglushak-vt/io.github.hbase4s/badge.svg?branch=develop)](https://coveralls.io/github/vglushak-vt/io.github.hbase4s?branch=develop)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0092dd676154718af28f83f5309efd2)](https://www.codacy.com/app/vglushak-vt/io.github.hbase4s?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=vglushak-vt/io.github.hbase4s&amp;utm_campaign=Badge_Grade)
 
 
 Scala wrapper around HBase client library that provides user-friendly type-safe API and query language to work with HBase database.
   
 HBase client has extended powerful API with huge amount of different sophisticated options.
 
-There are no intention to cover all this options with hbase4s core library. 
+There are no intention to cover all this options with io.github.hbase4s core library. 
 The goal is to build framework that will support all basic functionality and 
 give user opportunity easily extend it for it's particular goals.  
 
@@ -31,11 +31,9 @@ Below is provided set of basic examples of establishing connection to HBase data
 extracting it in different way and removing.
 
 ```scala
-// hbase4s.GettingStartedTest
-
-import hbase4s._
-import hbase4s.config.HBaseDefaultConfig
-import hbase4s.utils.HBaseImplicitUtils._
+import io.github.hbase4s._
+import io.github.hbase4s.config.HBaseDefaultConfig
+import io.github.hbase4s.utils.HBaseImplicitUtils._
 
 object Example1 {
 
@@ -65,7 +63,7 @@ object Example1 {
   ).map(_.typed[Event].asClass)
 
   // scala static type DSL
-  import hbase4s.filter._
+  import io.github.hbase4s.filter._
   val e2 = client.scan[String](
     c("event", "description") === "oh-oh" & c("event", "index") > 18
   ).map(_.typed[Event].asClass)
@@ -137,12 +135,12 @@ Below is the sample of storing custom types.
 
 ```scala
 
-import hbase4s._
-import hbase4s.config.HBaseDefaultConfig
-import hbase4s.utils.HBaseImplicitUtils._
+import io.github.hbase4s._
+import io.github.hbase4s.config.HBaseDefaultConfig
+import io.github.hbase4s.utils.HBaseImplicitUtils._
 import java.text.SimpleDateFormat
 import java.util.{Date, TimeZone}
-import hbase4s.filter._
+import io.github.hbase4s.filter._
 
 object Example2 {
 
