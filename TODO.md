@@ -1,11 +1,11 @@
 ### Tasks. MVP
 
-1. README. Basic documentation added. Review and make sure it's enough to getting started.
+1. README. Basic documentation added. Review and make sure it's enough to get started.
 
-2. Publish binary and add info to getting starting of how to use this lib in clients project.
+2. Publish binary and add info to "getting starting" section of how to use this lib in clients project.
 
 3. README. Describe how to extend library (how to extend HBase client, parser?)
-It's mandatory, as currently there are no full support for existing Java API.
+It's mandatory, as currently there are no full support for existing HBase API (especially filters coverage).
 
 4. There is inconsistency between scala DSL and string based DSL in names. 
 It would be good to use the same names. 
@@ -18,21 +18,20 @@ It would be good to use the same names.
 Complexity: NORMAL
 
 2. Provide Admin implementation to perform DDL operation in HBase and manage cluster.
+Why do I need it?
 Complexity: HIGH
 
 3. Generate API docs(to be done as soon as stabilized).
 
-4. Setup coverage with coverall.
-
-5. Add support of custom types (for filters, and case class mappings).
+4. Add support of custom types (for filters, and case class mappings).
 Complexity: HIGH
+
+5. Performance testing. Comparison of HBase4s with HBase client java library.
 
 6. Add support of Option as case class field (if relevant column was not found in table populate with None).
 Complexity: NORMAL
 
 7. Setup gitter chat.
-
-8. Performance testing. Comparison of HBase4s with HBase client java library.
 
 ### Ideas
 
