@@ -1,7 +1,7 @@
 # HBase4s
 
-[![Build Status](https://travis-ci.org/hbase4s/io.github.hbase4s.svg?branch=develop)](https://travis-ci.org/hbase4s/io.github.hbase4s)
-[![Coverage Status](https://coveralls.io/repos/github/hbase4s/io.github.hbase4s/badge.svg?branch=develop)](https://coveralls.io/github/hbase4s/io.github.hbase4s?branch=develop)
+[![Build Status](https://travis-ci.org/hbase4s/hbase4s.svg?branch=develop)](https://travis-ci.org/hbase4s/hbase4s)
+[![Coverage Status](https://coveralls.io/repos/github/hbase4s/hbase4s/badge.svg?branch=develop)](https://coveralls.io/github/hbase4s/hbase4s?branch=develop)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a0092dd676154718af28f83f5309efd2)](https://www.codacy.com/app/vglushak-vt/io.github.hbase4s?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=vglushak-vt/io.github.hbase4s&amp;utm_campaign=Badge_Grade)
 
 
