@@ -57,7 +57,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
   }
 
   "It" should "know how to store case class" in {
-    val testData = Event(1, 10 ^ 10, enabled = true, "oh_yes")
+    val testData = Event(1, 10 ^ 10, "oh_yes", enabled = true)
     (1 to 1000).foreach { x =>
       dsl.put(x, testData.copy(index = x))
     }
@@ -72,7 +72,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
   }
 
   "It" should "allow to put, get, filter, delete" in {
-    val e = Event(1, 10L, enabled = true, "oh-oh")
+    val e = Event(1, 10L, "oh-oh", enabled = true)
     val rowId = "oh-oh-event"
     dsl.put(rowId, e)
     dsl.get(rowId).map(_.typed[Event].asClass) shouldBe Some(e)
@@ -84,7 +84,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
 
   "Custom filters" should "return correct results" in {
 
-    val testData = Event(1, 1L, enabled = true, "default")
+    val testData = Event(1, 1L, "default", 1.0f, 1.15, 15, enabled = true)
     (1 to 1000).foreach { x =>
       dsl.put(x, testData.copy(index = x, id = 10L * x, description = s"Some Text #$x"))
     }
@@ -95,7 +95,10 @@ class HBaseClientTest extends FlatSpec with Matchers {
 
       search("(event:id < long(100))").size shouldBe 9
 
-    val res2 = search("(event:id > long(120)) AND (page_count == 5)")
+    val res2 = search(
+      "(event:id > long(120)) AND (page_count == 5) AND" +
+        " (event:amount <= float(1.1)) AND (event:sum > double(1.10)) AND (event:rate >= short(15))"
+    )
     res2.size shouldBe 5
     res2.headOption.map { ev => ev.id shouldBe 140L }
 
@@ -110,10 +113,8 @@ class HBaseClientTest extends FlatSpec with Matchers {
     dsl.scan[Int]("column_value == long(240)").map(
       wr => wr.allColumnNames
     ).toList shouldBe List(List("event:id"))
-
-
   }
 }
 
-case class Event(index: Int, id: Long, enabled: Boolean, description: String)
+case class Event(index: Int, id: Long, description: String, amount: Float = 0f, sum: Double = 0.0d, rate: Short = 1, enabled: Boolean)
 

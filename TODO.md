@@ -56,3 +56,6 @@ Downside: not possible to use if data stored with different library, also more s
 
 3. HBase documentation recommends to have short family name and the same applied for column names,
 because all this data is stored quite in HBase for each record.
+
+4. For simplicity, should possibility to refer columns by name without family name be added?
+This can be done for ex. in WrappedResults where we have all columns extracted and can analyze if there are different family names there.
