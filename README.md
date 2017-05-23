@@ -186,4 +186,4 @@ Any help appreciated. User are welcome to try, raise issue or create pull reques
 
 ## License
 
-Source code and binaries are published under Apache License, Version 2.0
+Source code and binaries are published under MIT License.
