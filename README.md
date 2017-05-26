@@ -21,6 +21,12 @@ Note: raise an issue if some of basic functionality was missed
 
 ## Getting started
 
+Add following library to your project:
+
+```"io.github.hbase4s" %% "hbase4s-core" % "0.1.1"```
+
+Available only for Scala 2.11.
+
 Note! This is not production ready library. It's currently under active development. 
 Provided API can be changed from version to version without providing backward compatibility.
 

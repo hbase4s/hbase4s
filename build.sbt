@@ -12,7 +12,7 @@ lazy val Versions = new {
 lazy val hbase4s = (project in file("."))
   .settings(
     scalaVersion := "2.11.8",
-    name := "hbase4s",
+    organization := "io.github.hbase4s",
     moduleName := "hbase4s-core",
     version := "0.1.1",
     useGpg := true,
