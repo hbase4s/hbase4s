@@ -12,10 +12,12 @@ It would be good to use the same names.
 
 5. Make common API DSL wrappers available through package object io.github.hbase4s._ 
 
-6. Move everything to package io.github.io.github.hbase4s
- 
-7. Configure artifact publishing 
+6. Configure artifact publishing 
 http://www.scala-sbt.org/release/docs/Using-Sonatype.html 
+
+7. Add possibility to select columns we want to get after scan
+
+8. Performance optimization: cache byte[] values for column families and qualifiers
 
 ### Tasks. Others
 
@@ -59,3 +61,5 @@ because all this data is stored quite in HBase for each record.
 
 4. For simplicity, should possibility to refer columns by name without family name be added?
 This can be done for ex. in WrappedResults where we have all columns extracted and can analyze if there are different family names there.
+
+5. Example of API for hbase: https://github.com/nerdammer/spark-hbase-connector

@@ -12,8 +12,36 @@ lazy val Versions = new {
 lazy val hbase4s = (project in file("."))
   .settings(
     scalaVersion := "2.11.8",
-    name := "hbase4s-core",
-    moduleName := "io.github.hbase4s",
+    name := "hbase4s",
+    moduleName := "hbase4s-core",
+    version := "0.1.1",
+    useGpg := true,
+    licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
+    homepage := Some(url("http://github.com/hbase4s")),
+    scmInfo := Some(
+      ScmInfo(
+        url("http://github.com/hbase4s/hbase4s"),
+        "scm:git@github.com:hbase4s/hbase4s.git"
+      )
+    ),
+    developers := List(
+      Developer(
+        id = "vglushak-vt",
+        name = "Volodymyr Glushak",
+        email = "noreply@email",
+        url = url("http://github.com/vglushak-vt")
+      )
+
+    ),
+    publishTo := {
+      val nexus = "https://oss.sonatype.org/"
+      if (isSnapshot.value)
+        Some("snapshots" at nexus + "content/repositories/snapshots")
+      else
+        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    },
+    publishMavenStyle := true,
+    publishArtifact in Test := true,
     scalacOptions in ThisBuild ++= Seq(
       "-language:experimental.macros",
       "-target:jvm-1.8",
@@ -53,7 +81,7 @@ lazy val hbase4s = (project in file("."))
 
       // below are set of libraries required for testing HBase with testing server.
       "org.apache.hadoop" % "hadoop-common" % Versions.hadoop % Test classifier "tests",
-      "org.apache.hadoop" % "hadoop-hdfs" % Versions.hadoop% Test classifier "tests",
+      "org.apache.hadoop" % "hadoop-hdfs" % Versions.hadoop % Test classifier "tests",
       "org.apache.hadoop" % "hadoop-hdfs" % Versions.hadoop % Test,
 
       "org.apache.hbase" % "hbase-common" % Versions.hbase % Test classifier "tests",

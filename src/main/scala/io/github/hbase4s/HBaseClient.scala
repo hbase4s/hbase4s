@@ -42,9 +42,14 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
     * @tparam K type of rows keys
     * @return map of rows [row key, list of fields]
     */
-  def scanAll[K: TypeTag]: Map[K, List[Field[Array[Byte]]]] = transformResults(table.getScanner(new Scan()))
+  def scanAll[K: TypeTag]: Map[K, List[Field[Array[Byte]]]] = {
+    val scanner = table.getScanner(new Scan())
+    val res = transformResults[K](scanner)
+    scanner.close()
+    res
+  }
 
-  @deprecated("unrelailable api")
+  @deprecated("unreliable api")
   def scanAllAsStr: Map[String, List[Field[String]]] = {
     scanAll[String].map { case (k, v) =>
       k -> v.map { f =>
@@ -62,22 +67,21 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
     val s = new Scan()
     s.setFilter(fl)
     val scan = table.getScanner(s)
-    new ResultTraversable[K](transformResults(scan))
+    val res = new ResultTraversable[K](transformResults(scan))
+    scan.close()
+    res
   }
 
   def get[K: TypeTag](r: K): Option[WrappedResult[K]] = get(List(r)).headOption
 
-  // TODO: implement test
   def get[K: TypeTag](r: List[K]): ResultTraversable[K] = new ResultTraversable[K](
     table.get(r.map(req => new Get(anyToBytes(req))).asJava).flatMap(r => transformResult[K](r)).map { case (k, value) =>
       k -> value
     }.toMap
   )
 
-  // TODO: it shou
   def delete[K](r: K): Unit = table.delete(new Delete(anyToBytes(r)))
 
-  // TODO: implement test
   def delete[K](r: List[K]): Unit = table.delete(r.map(req => new Delete(anyToBytes(r))).asJava)
 
   private[this] def transformResults[K: TypeTag](scan: ResultScanner) = scan.asScala.flatMap { x =>
