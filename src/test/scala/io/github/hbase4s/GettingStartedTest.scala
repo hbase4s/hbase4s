@@ -25,7 +25,7 @@ class GettingStartedTest extends FlatSpec with Matchers {
   case class Event(index: Int, id: Long, enabled: Boolean, description: String)
 
   // establish connection to HBase server, point HBaseClient to work with "transactions" table
-  val client = new HBaseClient(new HBaseConnection(new HBaseExternalConfig(utility.getConfiguration)), Table)
+  val client: HBaseClient = hBaseClient(new HBaseExternalConfig(utility.getConfiguration), Table)
 
   "Sample 1" should "show how to work with library using case classes" in {
     val e = Event(546, 10L, enabled = true, "oh-oh")

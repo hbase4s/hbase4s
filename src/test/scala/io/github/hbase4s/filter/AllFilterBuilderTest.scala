@@ -22,11 +22,11 @@ class AllFilterBuilderTest extends AbstractFilterTest {
 
   "Static and string based filters" should "produce the same output" in {
     val filter1 = keys & (c("family", "column") !== "SomeValue")
-    val filter2 = parseOrFailOnErr("(key AND (family:column != SomeValue))")
+    val filter2 = parseOrFailOnErr("(keys AND (family:column != SomeValue))")
     filter1 shouldBe filter2
 
-    keys shouldBe "key".f
-    firstKeys shouldBe "first_key".f
+    keys shouldBe "keys".f
+    firstKey shouldBe "first_key".f
     rowPrefix is "row_id_1" shouldBe "row_prefix == row_id_1".f
     columnPrefix is "col_name_a" shouldBe "column_prefix == col_name_a".f
     columnPrefix in("col_a", "col_b") shouldBe "column_prefix == (col_a, col_b)".f
@@ -36,7 +36,7 @@ class AllFilterBuilderTest extends AbstractFilterTest {
     columnName is "col_name_a" shouldBe "column_name == col_name_a".f
     columnValue is "some_value_b" shouldBe "column_value == some_value_b".f
     c("event", "name") === "Henry VIII" shouldBe "event:name == \"Henry VIII\"".f
-    keys & pageLimit === 2 shouldBe "key AND (page_count == 2)".f
+    keys & pageLimit === 2 shouldBe "keys AND (page_count == 2)".f
     (rowPrefix is "r_a") | (columnPrefix is "c_b") shouldBe "(row_prefix == r_a) OR (column_prefix == c_b)".f
   }
 }

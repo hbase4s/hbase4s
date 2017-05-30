@@ -139,7 +139,7 @@ object FilterParser {
   }
 
   object Keywords {
-    val Key = "key"
+    val Key = "keys"
     val FirstKey = "first_key"
     val RowPrefix = "row_prefix"
     val ColumnPrefix = "column_prefix"

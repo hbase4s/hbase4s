@@ -33,7 +33,7 @@ package object filter {
 
   def keys = KeyOnly
 
-  def firstKeys = FirstKeyOnly
+  def firstKey = FirstKeyOnly
 
   object rowPrefix {
     def is(s: String) = RowPrefix(s)
