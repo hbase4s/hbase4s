@@ -14,4 +14,4 @@ Manual approach described below.
 `sonatypeOpen "io.github.hbase4s" "hbase4s-<version>"` - create new staging
 `publishSigned` - publish binaries
 Go to nexus website and release binaries from staging to maven central.
-3. Back merge changes to `develop` (should be just version change)
+3. Back merge changes to `develop` (should be just version change).

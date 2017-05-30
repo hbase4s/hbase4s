@@ -7,7 +7,7 @@ class AllFilterBuilderTest extends AbstractFilterTest {
 
   "Following filters" should "be supported" in {
     // store some data in advanced
-    parseOrFailOnErr("key") shouldBe KeyOnly
+    parseOrFailOnErr("keys") shouldBe KeyOnly
     parseOrFailOnErr("first_key") shouldBe FirstKeyOnly
 
     parseOrFailOnErr("row_prefix == row1") shouldBe RowPrefix("row1")

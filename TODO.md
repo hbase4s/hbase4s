@@ -5,12 +5,9 @@
 2. README. Describe how to extend library (how to extend HBase client, parser?)
 It's mandatory, as currently there are no full support for existing HBase API (especially filters coverage).
 
-3. There is inconsistency between scala DSL and string based DSL in names. 
-It would be good to use the same names. 
+3. Make common API DSL wrappers available through package object io.github.hbase4s._ 
 
-4. Make common API DSL wrappers available through package object io.github.hbase4s._ 
-
-5. Add possibility to select columns we want to get after scan
+4. Add possibility to select columns we want to get after scan
 
 ### Tasks. Others
 
@@ -33,6 +30,9 @@ Complexity: NORMAL
 
 7. Setup gitter chat.
 
+8. There is inconsistency between scala DSL and string based DSL in names. 
+It would be good to use the same names. 
+
 ### Ideas
 
 1. Should I store Type information (Meta) in HBase together with Data.
@@ -52,7 +52,7 @@ Downside: not possible to use if data stored with different library, also more s
 3. HBase documentation recommends to have short family name and the same applied for column names,
 because all this data is stored quite in HBase for each record.
 
-4. For simplicity, should possibility to refer columns by name without family name be added?
+4. For simplicity, should be possibility to refer columns by name without family name be added?
 This can be done for ex. in WrappedResults where we have all columns extracted and can analyze if there are different family names there.
 
 5. Example of API for hbase: https://github.com/nerdammer/spark-hbase-connector

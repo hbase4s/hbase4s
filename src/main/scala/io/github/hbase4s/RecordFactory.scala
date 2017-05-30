@@ -1,6 +1,6 @@
 package io.github.hbase4s
 
-import io.github.hbase4s.utils.HBaseImplicitUtils.{anyToBytes, _}
+import io.github.hbase4s.utils.HBaseImplicitUtils._
 import shapeless.ops.traversable.FromTraversable
 import shapeless.{Generic, HList}
 

@@ -25,19 +25,6 @@ object HBaseImplicitUtils {
 
   implicit def asBytes(s: Short): Array[Byte] = Bytes.toBytes(s)
 
-  def anyToBytes[T](a: T): Array[Byte] = a match {
-    case s: String => s
-    case i: Int => i
-    case l: Long => l
-    case d: Double => d
-    case f: Float => f
-    case b: Boolean => b
-    case sh: Short => sh
-    case bd: BigDecimal => bd
-    case ab: Array[Byte] => ab
-    case x => sys.error(s"Type ${x.getClass.getSimpleName} of value $a is not supported.")
-  }
-
   implicit def asString(b: Array[Byte]): String = Bytes.toString(b)
 
   implicit def asInt(b: Array[Byte]): Int = Bytes.toInt(b)
