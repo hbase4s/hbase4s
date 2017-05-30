@@ -11,17 +11,31 @@ import scala.util.{Failure, Success}
 class FilterParser(val input: ParserInput) extends Parser {
 
   def InputLine: Rule1[Expr] = rule {
-    MultiExpr ~ EOI
+    ScanWithOpts ~ EOI
   }
 
-  private[this] def MultiExpr: Rule1[Expr] = rule {
-    Factor ~ ws ~ zeroOrMore(
-      ignoreCase("or") ~ Factor ~> Or
-        | ignoreCase("and") ~ Factor ~> And
-    )
+  def ScanWithOpts: Rule1[Expr] = rule {
+    MultiExpr ~ ExprOpts ~> TopLevelExpr | MultiExpr
   }
 
-  private[this] def Factor: Rule1[Expr] = rule {
+
+  def ExprOpt: Rule1[ExprOpts] =
+    rule {
+      "start_row" ~ eq ~ CapturedKeyword ~> StartRowId |
+        "stop_row" ~ eq ~ CapturedKeyword ~> StopRowId
+    }
+
+
+  def ExprOpts: Rule1[Seq[ExprOpts]] = rule {
+    ws ~ '|' ~ ws ~ oneOrMore(ExprOpt).separatedBy(ws ~ ',' ~ ws)
+  }
+
+
+  private[this] def MultiExpr: Rule1[FilterExpr] = rule {
+    Factor ~ ws ~ (ignoreCase("or") ~ Factor ~> Or | ignoreCase("and") ~ Factor ~> And).*
+  }
+
+  private[this] def Factor: Rule1[FilterExpr] = rule {
     SingleExprWrapped | KeywordBased | SingleExpr | MultiExprWrapped
   }
 
@@ -29,7 +43,7 @@ class FilterParser(val input: ParserInput) extends Parser {
     openBracket ~ MultiExpr ~ closeBracket
   }
 
-  private[this] def SingleExprWrapped: Rule1[Expr] = rule {
+  private[this] def SingleExprWrapped: Rule1[FilterExpr] = rule {
     openBracket ~ SingleExpr ~ closeBracket
   }
 
@@ -37,7 +51,7 @@ class FilterParser(val input: ParserInput) extends Parser {
     FieldName ~ ws ~ OpExpr ~ ws ~ (TypedExpr | QuotedText) ~> ((a: Column, b: CompareOp, c: Any) => SingleColVal(a, b, c))
   }
 
-  private[this] def KeywordBased: Rule1[Expr] = rule {
+  private[this] def KeywordBased: Rule1[FilterExpr] = rule {
     (Keywords.Key ~ push(KeyOnly)) |
       (Keywords.FirstKey ~ push(FirstKeyOnly)) |
       Keywords.RowPrefix ~ eq ~ CapturedKeyword ~> RowPrefix |
@@ -52,7 +66,7 @@ class FilterParser(val input: ParserInput) extends Parser {
 
 
   private[this] def eq = rule {
-    ws ~ oneOrMore(anyOf("=")) ~ ws
+    ws ~ anyOf("=").+ ~ ws
   }
 
   private[this] def Int = rule {
@@ -60,7 +74,7 @@ class FilterParser(val input: ParserInput) extends Parser {
   }
 
   private[this] def Num = rule {
-    capture(oneOrMore(CharPredicate.Digit) ~ zeroOrMore(anyOf(",.") ~ oneOrMore(CharPredicate.Digit)))
+    capture(CharPredicate.Digit.+ ~ (anyOf(",.") ~ CharPredicate.Digit.+).*)
   }
 
   private[this] def ComaSeparatedKeywords = rule {
@@ -68,7 +82,7 @@ class FilterParser(val input: ParserInput) extends Parser {
   }
 
   private[this] def OpExpr: Rule1[CompareOp] = rule {
-    capture(oneOrMore(anyOf("=<>!"))) ~> compareOp _
+    capture(anyOf("=<>!").+) ~> compareOp _
   }
 
   private[this] def FieldName: Rule1[Column] = rule {
@@ -108,7 +122,7 @@ class FilterParser(val input: ParserInput) extends Parser {
   }
 
   private[this] def ws = rule {
-    zeroOrMore(WhiteSpaceChar)
+    WhiteSpaceChar.*
   }
 }
 

@@ -9,6 +9,8 @@ It's mandatory, as currently there are no full support for existing HBase API (e
 
 4. Add possibility to select columns we want to get after scan
 
+5. Add scan options to filters (in scope of MVP start_row, stop_row)
+
 ### Tasks. Others
 
 1. Extend filter support to cover all possible HBase filters and support all (most) options for each filter.
@@ -32,6 +34,8 @@ Complexity: NORMAL
 
 8. There is inconsistency between scala DSL and string based DSL in names. 
 It would be good to use the same names. 
+
+9. Query language should include not just filter expressions, but also conditions from scan (stop, start rows, batch size etc.)
 
 ### Ideas
 

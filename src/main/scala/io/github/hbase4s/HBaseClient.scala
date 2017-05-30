@@ -4,7 +4,6 @@ import io.github.hbase4s.config.HBaseConfig
 import io.github.hbase4s.filter.{FilterParser, FilterTranslator}
 import io.github.hbase4s.utils.HBaseImplicitUtils._
 import org.apache.hadoop.hbase.client._
-import org.apache.hadoop.hbase.filter.Filter
 import org.apache.hadoop.hbase.{Cell, CellUtil, TableName}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -60,12 +59,13 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
 
   def scan[K: TypeTag](filter: String): ResultTraversable[K] = scan[K](FilterParser.parse(filter))
 
-  def scan[K: TypeTag](f: filter.Expr): ResultTraversable[K] = scan[K](FilterTranslator.fromExpr(f))
+  def scan[K: TypeTag](f: filter.Expr): ResultTraversable[K] = {
+    val sc = FilterTranslator.scanFromExpr(f)
+    logger.debug(s"Searching with scan-filter $sc")
+    scan[K](sc)
+  }
 
-  def scan[K: TypeTag](fl: Filter): ResultTraversable[K] = {
-    logger.debug(s"Searching with filter $fl")
-    val s = new Scan()
-    s.setFilter(fl)
+  def scan[K: TypeTag](s: Scan): ResultTraversable[K] = {
     val scan = table.getScanner(s)
     val res = new ResultTraversable[K](transformResults(scan))
     scan.close()
