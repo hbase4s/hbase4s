@@ -2,22 +2,15 @@
 
 1. README. Basic documentation added. Review and make sure it's enough to get started.
 
-2. Publish binary and add info to "getting starting" section of how to use this lib in clients project.
-
-3. README. Describe how to extend library (how to extend HBase client, parser?)
+2. README. Describe how to extend library (how to extend HBase client, parser?)
 It's mandatory, as currently there are no full support for existing HBase API (especially filters coverage).
 
-4. There is inconsistency between scala DSL and string based DSL in names. 
+3. There is inconsistency between scala DSL and string based DSL in names. 
 It would be good to use the same names. 
 
-5. Make common API DSL wrappers available through package object io.github.hbase4s._ 
+4. Make common API DSL wrappers available through package object io.github.hbase4s._ 
 
-6. Configure artifact publishing 
-http://www.scala-sbt.org/release/docs/Using-Sonatype.html 
-
-7. Add possibility to select columns we want to get after scan
-
-8. Performance optimization: cache byte[] values for column families and qualifiers
+5. Add possibility to select columns we want to get after scan
 
 ### Tasks. Others
 
@@ -63,3 +56,7 @@ because all this data is stored quite in HBase for each record.
 This can be done for ex. in WrappedResults where we have all columns extracted and can analyze if there are different family names there.
 
 5. Example of API for hbase: https://github.com/nerdammer/spark-hbase-connector
+
+6. Performance optimization: cache byte[] values for column families and qualifiers.
+There are couple of options here. One is to cache everything, without letting user know about it happening.
+Cache can/should be applied for families names, qualifiers. 
