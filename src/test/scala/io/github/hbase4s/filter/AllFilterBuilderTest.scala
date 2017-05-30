@@ -18,6 +18,7 @@ class AllFilterBuilderTest extends AbstractFilterTest {
     parseOrFailOnErr("stop_row = row7") shouldBe InclusiveStop("row7")
     parseOrFailOnErr("column_name == date") shouldBe Qualifier(Eq, "date")
     parseOrFailOnErr("column_value == some") shouldBe Value(Eq, "some")
+    parseOrFailOnErr("column_value == some | start_row == row1, stop_row == row15") shouldBe TopLevelExpr(Value(Eq, "some"), Seq(StartRowId("row1"), StopRowId("row15")))
   }
 
   "Static and string based filters" should "produce the same output" in {

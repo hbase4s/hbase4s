@@ -23,11 +23,11 @@ package object filter {
 
   }
 
-  implicit class RichExpr(a: Expr) {
+  implicit class RichExpr(a: FilterExpr) {
 
-    def &(b: Expr) = And(a, b)
+    def &(b: FilterExpr) = And(a, b)
 
-    def |(b: Expr) = Or(a, b)
+    def |(b: FilterExpr) = Or(a, b)
 
   }
 
