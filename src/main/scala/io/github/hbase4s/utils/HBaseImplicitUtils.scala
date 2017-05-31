@@ -2,6 +2,7 @@ package io.github.hbase4s.utils
 
 import org.apache.hadoop.hbase.util.Bytes
 
+import scala.collection.concurrent.TrieMap
 import scala.reflect.runtime.universe._
 
 /**
@@ -56,9 +57,54 @@ object HBaseImplicitUtils {
         case t if t =:= typeOf[Short] => asShort(b)
         case t if t =:= typeOf[BigDecimal] => asBigDecimal(b)
         case t if t =:= typeOf[Array[Byte]] => b
-        case t => sys.error(s"Can't extract value from $t type. Provide custom extractor.")
+        // add support of other types via Encoder classes
+        case t => EncoderRegistry.encoder(t).fromBytes(b)
       }
     }
   }
+
+}
+
+trait Encoder[T] {
+  def fromBytes(a: Array[Byte]): T
+
+  // TODO: fix this Any???
+  def toBytes(b: Any): Array[Byte]
+}
+
+class OptionEncoder[V: TypeTag] extends Encoder[Option[V]] {
+
+  import HBaseImplicitUtils._
+  import io.github.hbase4s._
+
+  override def fromBytes(a: Array[Byte]): Option[V] = {
+    Option(a.from(typeOf[V])).asInstanceOf[Option[V]]
+  }
+
+  override def toBytes(b: Any): Array[Byte] = b match {
+    case None => null
+    case Some(x) => anyToBytes(x)
+  }
+}
+
+object EncoderRegistry {
+
+  val cache = new TrieMap[Type, Encoder[_]]()
+
+  cache.put(typeOf[Option[String]], new OptionEncoder[String])
+  cache.put(typeOf[Option[Int]], new OptionEncoder[Int])
+  cache.put(typeOf[Option[Long]], new OptionEncoder[Long])
+  cache.put(typeOf[Option[Short]], new OptionEncoder[Short])
+  cache.put(typeOf[Option[Float]], new OptionEncoder[Float])
+  cache.put(typeOf[Option[Double]], new OptionEncoder[Double])
+  cache.put(typeOf[Option[Boolean]], new OptionEncoder[Boolean])
+  cache.put(typeOf[Option[BigDecimal]], new OptionEncoder[BigDecimal])
+  cache.put(typeOf[None.type], new OptionEncoder[String])
+
+  def encoder(tt: Type): Encoder[_] = cache.getOrElse(tt,
+    cache.find(t => tt =:= t._1).getOrElse(
+      sys.error(s"Can't extract value from $tt type. Provide custom extractor.")
+    )._2
+  )
 
 }
