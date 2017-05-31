@@ -27,8 +27,8 @@ object FilterTranslator {
       case TopLevelExpr(filter, op) =>
         scan.setFilter(fromExpr(filter))
         op.foreach {
-          case StartRowId(rid) => scan.setStartRow(rid)
-          case StopRowId(rid) => scan.setStopRow(rid)
+          case StartRowId(rid) => scan.setStartRow(anyToBytes(rid))
+          case StopRowId(rid) => scan.setStopRow(anyToBytes(rid))
         }
       case filter: FilterExpr =>
         scan.setFilter(fromExpr(filter))
@@ -40,8 +40,8 @@ object FilterTranslator {
   def fromExpr(e: FilterExpr): Filter = e match {
     case KeyOnly => new KeyOnlyFilter
     case FirstKeyOnly => new FirstKeyOnlyFilter
-    case RowPrefix(s) => new PrefixFilter(s)
-    case ColumnPrefix(cp) => new ColumnPrefixFilter(cp)
+    case RowPrefix(s) => new PrefixFilter(anyToBytes(s))
+    case ColumnPrefix(cp) => new ColumnPrefixFilter(anyToBytes(cp))
     case MultipleColumnPrefix(pfxs) => new MultipleColumnPrefixFilter(pfxs.map(asBytes).toArray)
     case ColumnCountGet(i) => new ColumnCountGetFilter(i)
     case Page(p) => new PageFilter(p)

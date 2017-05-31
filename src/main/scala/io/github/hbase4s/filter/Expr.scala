@@ -31,13 +31,13 @@ case object FirstKeyOnly extends FilterExpr
   * Filter returns only those key-values present in a row that starts with the specified row prefix
   * @param p a prefix of a row key
   */
-case class RowPrefix(p: String) extends FilterExpr
+case class RowPrefix[T](p: T) extends FilterExpr
 
 /**
   * Filter returns only those key-values present in a column that starts with the specified column prefix
   * @param cp a prefix of a column qualifier
   */
-case class ColumnPrefix(cp: String) extends FilterExpr
+case class ColumnPrefix[T](cp: T) extends FilterExpr
 
 /**
   * Filter returns key-values that are present in a column that starts with any of the specified column prefixes.
@@ -92,6 +92,6 @@ case class Value[T](cp: CompareOp, q: T) extends FilterExpr
 case class SingleColVal[T](col: Column, op: CompareOp, value: T, setFilterIfMissing: Boolean = true) extends FilterExpr
 
 
-case class StartRowId(q: String) extends ExprOpts
+case class StartRowId[T](q: T) extends ExprOpts
 
-case class StopRowId(q: String) extends ExprOpts
+case class StopRowId[T](q: T) extends ExprOpts

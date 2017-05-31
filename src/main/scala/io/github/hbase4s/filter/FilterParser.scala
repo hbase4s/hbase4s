@@ -21,8 +21,8 @@ class FilterParser(val input: ParserInput) extends Parser {
 
   def ExprOpt: Rule1[ExprOpts] =
     rule {
-      "start_row" ~ eq ~ CapturedKeyword ~> StartRowId |
-        "stop_row" ~ eq ~ CapturedKeyword ~> StopRowId
+      "start_row" ~ eq ~ (TypedExpr | QuotedText | CapturedKeyword) ~> ((a: Any) => StartRowId(a)) |
+        "stop_row" ~ eq ~ (TypedExpr | QuotedText | CapturedKeyword) ~> ((a: Any) => StopRowId(a))
     }
 
 
@@ -54,9 +54,9 @@ class FilterParser(val input: ParserInput) extends Parser {
   private[this] def KeywordBased: Rule1[FilterExpr] = rule {
     (Keywords.Key ~ push(KeyOnly)) |
       (Keywords.FirstKey ~ push(FirstKeyOnly)) |
-      Keywords.RowPrefix ~ eq ~ CapturedKeyword ~> RowPrefix |
+      Keywords.RowPrefix ~ eq ~ (TypedExpr | QuotedText | CapturedKeyword) ~> ((a: Any) => RowPrefix(a)) |
       Keywords.ColumnPrefix ~ eq ~ ComaSeparatedKeywords ~> MultipleColumnPrefix |
-      Keywords.ColumnPrefix ~ eq ~ CapturedKeyword ~> ColumnPrefix |
+      Keywords.ColumnPrefix ~ eq ~ (TypedExpr | QuotedText | CapturedKeyword) ~> ((a: Any) => ColumnPrefix(a)) |
       Keywords.ColumnLimit ~ eq ~ Int ~> (x => ColumnCountGet(x.toInt)) |
       Keywords.PageCount ~ eq ~ Int ~> (y => Page(y.toLong)) |
       Keywords.StopRow ~ eq ~ CapturedKeyword ~> InclusiveStop |
