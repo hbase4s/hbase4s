@@ -3,7 +3,6 @@ package io.github.hbase4s.utils
 import io.github.hbase4s.serializer.EncoderRegistry
 import org.apache.hadoop.hbase.util.Bytes
 
-import scala.collection.concurrent.TrieMap
 import scala.reflect.runtime.universe._
 
 /**
@@ -59,7 +58,7 @@ object HBaseImplicitUtils {
         case t if t =:= typeOf[BigDecimal] => asBigDecimal(b)
         case t if t =:= typeOf[Array[Byte]] => b
         // add support of other types via Encoder classes
-        case t => EncoderRegistry.encoder(t).fromBytes(b)
+        case t => EncoderRegistry.encodeByType(t).fromBytes(b)
       }
     }
   }

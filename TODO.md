@@ -9,9 +9,7 @@ It's mandatory, as currently there are no full support for existing HBase API (e
 
 4. Add possibility to select columns we want to get after scan
 
-5. Add scan options to filters (in scope of MVP start_row, stop_row). Done - documentation left.
-
-6. Custom types support - documentation needed. Should be mentioned issue with types.
+5. Custom types support - documentation needed. Should be mentioned issue with types.
 
 ### Tasks. Others
 

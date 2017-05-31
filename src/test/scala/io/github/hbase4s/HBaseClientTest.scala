@@ -15,9 +15,10 @@ class HBaseClientTest extends FlatSpec with Matchers {
   private[this] val Fam1 = "fox_family"
   private[this] val Fam2 = "dog_family"
   private[this] val Fam3 = "event"
+  private[this] val Fam4 = "withopt"
   private[this] val F1 = "field1"
   private[this] val F2 = "field2"
-  private[this] val Families: Array[Array[Byte]] = Array(Fam1, Fam2, Fam3)
+  private[this] val Families: Array[Array[Byte]] = Array(Fam1, Fam2, Fam3, Fam4)
   utility.createTable(TestTable, Families, 1)
 
   case class Test2Field[T](key: T, field1: String, field2: String)
@@ -118,7 +119,20 @@ class HBaseClientTest extends FlatSpec with Matchers {
     r2.map(_.key).toList shouldBe List(200)
     r2.map(_.allColumnNames).toList shouldBe List(List("event:amount")) // first field alphabetical order
   }
+
+
+  "Option type" should "be handled" in {
+    dsl.put(1, WithOpt(1, Option("knight"), Some(true)))
+
+    val res = dsl.get(1).map(_.typed[WithOpt].asClass).getOrElse(sys.error("Can't find WithOpt record in HBase"))
+
+    res.i shouldBe 1
+    res.name shouldBe Some("knight")
+    res.exists shouldBe Some(true)
+  }
 }
+
+case class WithOpt(i: Int, name: Option[String], exists: Option[Boolean])
 
 case class Event(index: Int, id: Long, description: String, amount: Float = 0f, sum: Double = 0.0d, rate: Short = 1, enabled: Boolean)
 

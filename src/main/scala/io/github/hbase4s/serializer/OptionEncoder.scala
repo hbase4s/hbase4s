@@ -7,15 +7,15 @@ import scala.reflect.runtime.universe._
 /**
   * Created by Volodymyr.Glushak on 31/05/2017.
   */
-class OptionEncoder[V: TypeTag] extends Encoder[Option[V]] {
-
+abstract class OptionEncoder[V: TypeTag](val name: String) extends QueryEncoder[Option[V]] {
 
   override def fromBytes(a: Array[Byte]): Option[V] = {
     Option(a.from(typeOf[V])).asInstanceOf[Option[V]]
   }
 
   override def toBytes(b: Any): Array[Byte] = b match {
+    case Some(x) => anyToBytes(x) // recursively handle values inside
     case None => null
-    case Some(x) => anyToBytes(x)
   }
+
 }

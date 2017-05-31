@@ -6,6 +6,7 @@ import io.github.hbase4s.utils.HBaseImplicitUtils._
 import org.scalatest.{FlatSpec, Matchers}
 import shapeless.HNil
 
+import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 
@@ -44,6 +45,9 @@ class TypeUtilsTest extends FlatSpec with Matchers {
     ab.from(typeOf[Option[String]]) shouldBe in
 
     anyToBytes(None).from(typeOf[None.type]) shouldBe None
+
+    val x: Any = Some("1") // issue is if we remove proper TypeTag, by defining variable as Any.
+    anyToBytes(x).from(typeOf[Some[String]]) shouldBe Option("1")
 
     anyToBytes(Option(1)).from(typeOf[Option[Int]]) shouldBe Option(1)
     anyToBytes(Option(1.01)).from(typeOf[Option[Double]]) shouldBe Option(1.01)
