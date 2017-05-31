@@ -42,7 +42,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
   "It" should "perform put and scan with int key" in {
     val someField = "field_with_int"
     (1 to Max).foreach { i =>
-      dsl.putFields(i, List(Field(Fam1, someField, s"value_$i"), Field(Fam2, F2, "value_2")))
+      dsl.putFields(-i, List(Field(Fam1, someField, s"value_$i"), Field(Fam2, F2, "value_2")))
     }
 
     val res2 = dsl.scan[Int](s"($Fam1:$someField=value_20)")
@@ -51,7 +51,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
         Test2Field(wr.key, wr.asString(s"$Fam1:$someField"), wr.asString(s"$Fam2:$F2"))
       })
     res2.size shouldBe 1
-    res2.headOption.map(_.key shouldBe 20)
+    res2.headOption.map(_.key shouldBe -20)
     res2.headOption.map(_.field1 shouldBe "value_20")
     res2.headOption.map(_.field2 shouldBe "value_2")
   }
@@ -59,7 +59,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
   "It" should "know how to store case class" in {
     val testData = Event(1, 10 ^ 10, "oh_yes", enabled = true)
     (1 to 1000).foreach { x =>
-      dsl.put(x, testData.copy(index = x))
+      dsl.put(-x, testData.copy(index = x))
     }
 
     val events = dsl.scan[Int]("event:description == oh_yes").map { wr =>
@@ -76,10 +76,10 @@ class HBaseClientTest extends FlatSpec with Matchers {
     val rowId = "oh-oh-event"
     dsl.put(rowId, e)
     dsl.get(rowId).map(_.typed[Event].asClass) shouldBe Some(e)
-    dsl.scan[String]("event:description = \"oh-oh\"").map(x => x.typed[Event].asClass) shouldBe List(e)
+    dsl.scan[String]("event:description = \"oh-oh\"").map(_.typed[Event].asClass) shouldBe List(e)
     dsl.delete(rowId)
     dsl.get(rowId).map(_.typed[Event].asClass) shouldBe None
-    dsl.scan[String]("event:description = \"oh-oh\"").map(x => x.typed[Event].asClass) shouldBe List()
+    dsl.scan[String]("event:description = \"oh-oh\"").map(_.typed[Event].asClass) shouldBe List()
   }
 
   "Custom filters" should "return correct results" in {
@@ -89,7 +89,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
       dsl.put(x, testData.copy(index = x, id = 10L * x, description = s"Some Text #$x"))
     }
 
-    def search(q: String) = dsl.scan[Int](q).map(wr => wr.typed[Event].asClass).toList
+    def search(q: String) = dsl.scan[Int](q).map(_.typed[Event].asClass).toList
 
     def searchStr(q: String) =
 
@@ -100,19 +100,25 @@ class HBaseClientTest extends FlatSpec with Matchers {
         " (event:amount <= float(1.1)) AND (event:sum > double(1.10)) AND (event:rate >= short(15))"
     )
     res2.size shouldBe 5
-    res2.headOption.map { ev => ev.id shouldBe 140L }
+    res2.headOption.foreach {
+      _.id shouldBe 140L
+    }
 
     dsl.scan[Int](
       "(column_prefix == i) AND (page_count == 1)"
-    ).map(wr => wr.allColumnNames).toList shouldBe List(List("event:id", "event:index"))
+    ).map(_.allColumnNames).toList shouldBe List(List("event:id", "event:index"))
 
-    dsl.scan[Int]("(column_name == enabled) AND (page_count ==1)").map(
-      wr => wr.allColumnNames
-    ).toList shouldBe List(List("event:enabled"))
+    dsl.scan[Int]("(column_name == enabled) AND (page_count ==1)").map(_.allColumnNames).toList shouldBe List(List("event:enabled"))
 
-    dsl.scan[Int]("column_value == long(240)").map(
-      wr => wr.allColumnNames
-    ).toList shouldBe List(List("event:id"))
+    dsl.scan[Int]("column_value == long(240)").map(_.allColumnNames).toList shouldBe List(List("event:id"))
+
+    val r1 = dsl.scan[Int]("keys AND (row_prefix == int(200))")
+    r1.map(_.key).toList shouldBe List(200)
+    r1.map(_.asString("event:description")).toList shouldBe List("") // field values should be empty
+
+    val r2 = dsl.scan[Int]("first_key AND (row_prefix == int(200)) | start_row == int(199), stop_row == int(201)")
+    r2.map(_.key).toList shouldBe List(200)
+    r2.map(_.allColumnNames).toList shouldBe List(List("event:amount")) // first field alphabetical order
   }
 }
 
