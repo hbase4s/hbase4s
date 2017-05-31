@@ -100,7 +100,7 @@ Note, all fields of such case class have to be within specified above types.
     
 As shown in getting started example, results of `scan, scanAll, get` functions can also be transformed to provided case class type.     
 
-## Filter DSL
+## Scan DSL
 
 HBase does not support SQL-like query language. 
 
@@ -108,7 +108,13 @@ However, it provides Filter API, that allows `scan` tables individually (no join
 
 HBase4s provide two version of DSL: string based (whole filter is represented as string) or Scala DSL based (set of scala classes).
 
-Supported filters in different DSLs with brief description.
+Developed DSL contains of two parts: `query_expression | query_options`
+
+Available query options are:
+- `start_row == <row_id>` - start scanning from particular row id.
+- `stop_row == <row_id>` - stop scanning when reach particular row id.
+
+Supported filters in both Scala and string based DSLs with brief description.
 
 Scala DSL|String DSL | Description 
 ----------------------------|----------------------------|----------------------------
@@ -177,6 +183,15 @@ Option: use scala API.
 2. Transform it to one of supported data types. As shown in example above date can be easily represented and stored as String.
 
 Another point to note while work with custom fields, there might be necessity to implement custom comparator in case of some specific comparison operations (Less, GreaterOrEq).
+
+### Custom types & case classes
+ 
+There is a possibility to define and register it's own ``Encoder`` that will transform type to/from byte array.
+Following steps need to be performed to achieve it:
+ 1. Implement trait `Encoder[T]` for your type `T`
+ 2. Register your implementation in global registry: `EncoderRegistry.add(T, new Encoder[T] { ... } )`
+ 3. Define case class with the field of type `T` and read/store it to HBase.
+ 
 
 ## Contributing
 

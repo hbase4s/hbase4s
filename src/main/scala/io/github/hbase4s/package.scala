@@ -1,8 +1,9 @@
 package io.github
 
 import io.github.hbase4s.config.HBaseConfig
-import io.github.hbase4s.utils.EncoderRegistry
+import io.github.hbase4s.serializer.EncoderRegistry
 import io.github.hbase4s.utils.HBaseImplicitUtils._
+
 import scala.reflect.runtime.universe._
 
 /**
@@ -12,11 +13,11 @@ package object hbase4s {
 
   def hBaseClient(conf: HBaseConfig, table: String) = new HBaseClient(new HBaseConnection(conf), table)
 
+  //  // be careful with overflowing // need weak collection with expiration policy
+  //  private val bytesCache = new TrieMap[Any, Array[Byte]]
+  //
+  //  def anyToBytesCached[T](a: T): Array[Byte] = bytesCache.getOrElseUpdate(a, anyToBytes(a))
 
-//  // be careful with overflowing // need weak collection with expiration policy
-//  private val bytesCache = new TrieMap[Any, Array[Byte]]
-//
-//  def anyToBytesCached[T](a: T): Array[Byte] = bytesCache.getOrElseUpdate(a, anyToBytes(a))
 
   def anyToBytes[T: TypeTag](a: T): Array[Byte] = a match {
     case s: String => s
@@ -28,7 +29,7 @@ package object hbase4s {
     case sh: Short => sh
     case bd: BigDecimal => bd
     case ab: Array[Byte] => ab
-    case x => EncoderRegistry.encoder(typeOf[T]).toBytes(x)
+    case _ => EncoderRegistry.encodeByValue(a).toBytes(a)
   }
 
 }
