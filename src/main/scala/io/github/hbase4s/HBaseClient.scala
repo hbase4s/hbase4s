@@ -23,7 +23,7 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
 
   protected val table: Table = connection.conn.getTable(TableName.valueOf(tableName))
 
-  def put[K, T <: AnyRef with Product](key: K, cc: T): Unit = putFields(RecordFactory.build(key, cc))
+  def put[K: TypeTag, T <: AnyRef with Product](key: K, cc: T): Unit = putFields(RecordFactory.build(key, cc))
 
   def putFields(r: Record): Unit = putFields(r.key, r.values)
 
@@ -80,9 +80,9 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
     }.toMap
   )
 
-  def delete[K](r: K): Unit = table.delete(new Delete(anyToBytes(r)))
+  def delete[K: TypeTag](r: K): Unit = table.delete(new Delete(anyToBytes(r)))
 
-  def delete[K](r: List[K]): Unit = table.delete(r.map(req => new Delete(anyToBytes(r))).asJava)
+  def delete[K: TypeTag](r: List[K]): Unit = table.delete(r.map(req => new Delete(anyToBytes(r))).asJava)
 
   private[this] def transformResults[K: TypeTag](scan: ResultScanner) = scan.asScala.flatMap { x =>
     transformResult[K](x)

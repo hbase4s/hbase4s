@@ -22,7 +22,7 @@ object RecordFactory {
   def getCCParams(cc: Product): Map[String, Any] =
     cc.getClass.getDeclaredFields.filterNot(_.isSynthetic).map(_.getName).zip(cc.productIterator.toList).toMap
 
-  def build[K, T <: AnyRef with Product](key: K, cc: T): CCRecord = {
+  def build[K: TypeTag, T <: AnyRef with Product](key: K, cc: T): CCRecord = {
     val family = colFamilyName(cc.getClass)
     val fields = getCCParams(cc).map { case (name, value) =>
       Field[Array[Byte]](family, name, anyToBytes(value))

@@ -59,7 +59,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
   "It" should "know how to store case class" in {
     val testData = Event(1, 10 ^ 10, "oh_yes", enabled = true)
     (1 to 1000).foreach { x =>
-      dsl.put(-x, testData.copy(index = x))
+      dsl.put(x, testData.copy(index = x))
     }
 
     val events = dsl.scan[Int]("event:description == oh_yes").map { wr =>
@@ -91,9 +91,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
 
     def search(q: String) = dsl.scan[Int](q).map(_.typed[Event].asClass).toList
 
-    def searchStr(q: String) =
-
-      search("(event:id < long(100))").size shouldBe 9
+    search("(event:id < long(100))").size shouldBe 9
 
     val res2 = search(
       "(event:id > long(120)) AND (page_count == 5) AND" +
