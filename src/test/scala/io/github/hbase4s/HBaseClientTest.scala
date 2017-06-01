@@ -129,6 +129,11 @@ class HBaseClientTest extends FlatSpec with Matchers {
     res.i shouldBe 1
     res.name shouldBe Some("knight")
     res.exists shouldBe Some(true)
+
+//    TODO: implement support for querying
+    // val res2 = dsl.scan[Int]("withopt:name = option_str(knight) AND (withopt:exists = option_bool(true))")
+//      .map(_.typed[WithOpt].asClass).headOption.getOrElse(sys.error("Can't find WithOpt record in HBase"))
+//    res2.i shouldBe 1
   }
 }
 

@@ -11,6 +11,9 @@ It's mandatory, as currently there are no full support for existing HBase API (e
 
 5. Custom types support - documentation needed. Should be mentioned issue with types.
 
+6. Make option queriable (connect it with encoders)
+
+
 ### Tasks. Others
 
 1. Extend filter support to cover all possible HBase filters and support all (most) options for each filter.
@@ -64,3 +67,6 @@ This can be done for ex. in WrappedResults where we have all columns extracted a
 6. Performance optimization: cache byte[] values for column families and qualifiers.
 There are couple of options here. One is to cache everything, without letting user know about it happening.
 Cache can/should be applied for families names, qualifiers. 
+
+7. Encoders can be alternatively implemented as implicit classes. (as Json Writters that pass as implicit params).
+ Default list of those implicit classes for basic classes might be available from some global package object.
