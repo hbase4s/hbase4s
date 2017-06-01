@@ -1,45 +1,34 @@
-### Tasks. MVP
+### Urgent tasks
 
 1. Documentation
 
-1.1. README. Basic documentation added. Review and make sure it's enough to get started.
-
-1.2. README. Describe how to extend library (how to extend HBase client, parser?)
+- Describe how to extend library (how to extend HBase client, parser?)
 It's mandatory, as currently there are no full support for existing HBase API (especially filters coverage).
-
-1.3. Custom types support - documentation needed. Should be mentioned issue with types.
-Should not write a lot: might be significant changes with its design 
 
 2. Coding
 
-2.1. Make common API DSL wrappers available through package object `io.github.hbase4s._` 
+- Make common API DSL wrappers available through package object `io.github.hbase4s._` 
 
-2.2. Add possibility to select columns we want to get after scan
+- Add possibility to select columns we want to get after scan (theoretically it's high demand feature as it can improve performance, can't it)
 
-### Tasks. Others
+### Other tasks
 
 1. Extend filter support to cover all possible HBase filters and support all (most) options for each filter.
 Complexity: NORMAL
-1.1. scan.set*
-1.2. query by regexp 
+- add support for different features like `scan.set*`
+- query by regexp (column value, row value etc.) 
 
 2. Provide Admin implementation to perform DDL operation in HBase and manage cluster.
 Why do I need it?
 Complexity: HIGH
 
-3. Generate API docs (to be done as soon as stabilized).
+3. Generate API docs (to be done as soon as library stabilized).
 
-4. Add support of custom types (for filters, and case class mappings).
-Complexity: HIGH
+4. Performance testing. Comparison of HBase4s with HBase client java library. Basic test present.
 
-5. Performance testing. Comparison of HBase4s with HBase client java library. Basic test present.
+5. Setup gitter chat.
 
-6. Setup gitter chat.
-
-7. There is inconsistency between scala DSL and string based DSL in names. 
-It would be good to use the same names. 
-
-8. Query language should include not just filter expressions, but also conditions from scan (stop, start rows, batch size etc.)
+6. There is inconsistency between scala DSL and string based DSL in names.  It would be good to use the same names. 
 
 ### Ideas
 

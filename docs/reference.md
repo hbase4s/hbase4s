@@ -35,7 +35,7 @@ Scala DSL|String DSL | Description
 `keys & pageLimit === 2` | `"keys AND (page_count == 2)".f` | And condition
 ```(rowPrefix is "r_a") / (columnPrefix is "c_b")``` | `"(row_prefix == r_a) OR (column_prefix == c_b)".f` | Or condition
 
-## Custom types
+## Custom types (user defined types)
 
 Getting started section cover the case of automatical Object Relational Mapping via case classes for some standard data types.
 As mentioned above HBase required values to be bytes array. 
@@ -87,7 +87,7 @@ Option: use scala API.
 
 Another point to note while work with custom fields, there might be necessity to implement custom comparator in case of some specific comparison operations (Less, GreaterOrEq).
 
-### Custom types & case classes
+### UDT and case classes
  
 There is a possibility to define and register it's own ``Encoder`` that will transform type to/from byte array.
 Following steps need to be performed to achieve it:
