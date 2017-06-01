@@ -1,6 +1,7 @@
 package io.github.hbase4s.filter
 
 import io.github.hbase4s.filter.FilterParser._
+import io.github.hbase4s.serializer.EncoderRegistry
 import org.parboiled2._
 
 import scala.util.{Failure, Success}
@@ -100,7 +101,10 @@ class FilterParser(val input: ParserInput) extends Parser {
       "bool(" ~ capture("true" | "false") ~ ")" ~> ((x: String) => x.toBoolean) |
       "short(" ~ Int ~ ")" ~> ((x: String) => x.toShort) |
       "float(" ~ Num ~ ")" ~> ((x: String) => x.toFloat) |
-      "double(" ~ Num ~ ")" ~> ((x: String) => x.toDouble)
+      "double(" ~ Num ~ ")" ~> ((x: String) => x.toDouble) |
+      CapturedKeyword ~ "(" ~ QuotedText ~ ")" ~> ((someType: String, someVal: String) => {
+        EncoderRegistry.fromString(someType, someVal)
+      })
   }
 
   private[this] def QuotedText: Rule1[String] = rule {

@@ -11,8 +11,13 @@ import scala.reflect.runtime.universe._
   */
 object EncoderRegistry {
 
+  def fromString(someType: String, someVal: String) = {
+    val enc = queryCache.getOrElse(someType, sys.error(s"$someType does not supported in query."))
+    enc.fromString(someVal)
+  }
+
   private val cache = new TrieMap[Type, Encoder[_]]()
-  private val queryCache = new TrieMap[String, Encoder[_]]()
+  private val queryCache = new TrieMap[String, QueryEncoder[_]]()
 
   def add(t: Type, enc: Encoder[_]): Option[Encoder[_]] = {
     cache.put(t, enc)
@@ -22,27 +27,25 @@ object EncoderRegistry {
   }
 
   // there are two ways to encode - by type or by value (extracting type from it
-  def encodeByType(tt: Type): Encoder[_] = {
-    cache.getOrElse(tt,
-      cache.find(t => tt =:= t._1).getOrElse(
-        cache.find(t => tt <:< t._1).getOrElse(// try to use encoder for super type. is that correct? // do not implement global encoders...
-          sys.error(s"Can't find encoder for type $tt.")
-        )
-      )._2
+  def encodeByType(tt: Type): Encoder[_] = cache.getOrElse(tt, {
+    val (_, enc) = cache.find { case (kt, _) => tt =:= kt }.getOrElse(
+      cache.find { case (kt, _) => tt <:< kt }.getOrElse(// try to use encoder for super type. is that correct? // do not implement global encoders...
+        sys.error(s"Can't find encoder for type $tt.")
+      )
     )
-  }
+    enc
+  })
 
   // this method was introduced to handle cases when information about type lost in runtime
   // (for ex.: value of some specific type defined as Any)
   def encodeByValue[T: TypeTag](value: T): Encoder[_] = {
     val tValue = typeOf[T]
-    cache.find(t => tValue =:= t._1 || tValue <:< t._1).getOrElse(
-      cache.find(t => {
-        t._1.typeSymbol.fullName == value.getClass.getTypeName
-      }).getOrElse(
+    val (_, enc) = cache.find { case (kt, _) => tValue =:= kt || tValue <:< kt }.getOrElse(
+      cache.find { case (kt, _) => kt.typeSymbol.fullName == value.getClass.getTypeName }.getOrElse(
         sys.error(s"Can't find encoder for value with unexpected type $value.")
       )
-    )._2
+    )
+    enc
   }
 
   // some option encoders below
