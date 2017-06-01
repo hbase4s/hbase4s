@@ -40,7 +40,7 @@ import io.github.hbase4s.utils.HBaseImplicitUtils._
 ```
 
 Prerequisites. Specified table with relevant family name must already exists in HBase (it can be created via `hbase shell`)
-```
+```scala
   case class Event(index: Int, id: Long, enabled: Boolean, description: String)
 
   val Table = "transactions"
@@ -48,18 +48,18 @@ Prerequisites. Specified table with relevant family name must already exists in 
 ```
   
 Establish connection to HBase server, point HBaseClient to work with "transactions" table
-```
+```scala
 val client = new HBaseClient(new HBaseConnection(new HBaseDefaultConfig), Table)
 ```
 
 Store case class in HBase table, under provided columns family 
-```  
+```scala
   val rowId = "unique-event-id"
   client.put(rowId, Event(546, 10L, enabled = true, "some description text"))
 ```
 
 Retrieve data from HBase by key and transform it to instance of `Event` case class
-```
+```scala
   val eventInDb = client.get(rowId).map(_.typed[Event].asClass)
 ```
 
@@ -69,14 +69,14 @@ but there is also extensive query language that allows user build complex querie
 HBase4s provides two ways of querying data from HBase table results are represented as `List` of `Event` class
 
 1. string-based DSL
-```
+```scala
   val e1 = client.scan[String](
     "(event:description = \"some description text\") AND (event:index > int(18))"
   ).map(_.typed[Event].asClass)
 ```
 
 2. Scala static type DSL
-```
+```scala
   import io.github.hbase4s.filter._
   val e2 = client.scan[String](
     c("event", "description") === "oh-oh" & c("event", "index") > 18
@@ -89,7 +89,7 @@ Both DSLs filters translated to native java `Scan` object and should be equally 
 Full set of supported querying features are described in reference guide.
 
 Remove by key:
-```
+```scala
   client.delete(rowId)
 ```
 
