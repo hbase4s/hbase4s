@@ -39,5 +39,12 @@ class AllFilterBuilderTest extends AbstractFilterTest {
     c("event", "name") === "Henry VIII" shouldBe "event:name == \"Henry VIII\"".f
     keys & pageLimit === 2 shouldBe "keys AND (page_count == 2)".f
     (rowPrefix is "r_a") | (columnPrefix is "c_b") shouldBe "(row_prefix == r_a) OR (column_prefix == c_b)".f
+
+    // tests for custom types
+    c("event", "age") === 15 shouldBe "event:age == int(15)".f
+    c("event", "description") === Option("some text") shouldBe "event:description == option_str(\"some text\")".f
+    c("e", "t") === Some(true) & c("e", "d") === Some(15.01) shouldBe "e:t == option_bool(true) AND (e:d == option_double(\"15.01\"))".f
+    c("e", "t") === None & c("e", "d") === Some(15.01f) shouldBe "e:t == none(null) AND (e:d == option_float(\"15.01\"))".f
+
   }
 }

@@ -4,7 +4,7 @@ import io.github.hbase4s.config.HBaseExternalConfig
 import io.github.hbase4s.utils.HBaseImplicitUtils._
 import io.github.hbase4s.utils.HBaseTesting
 import org.scalatest.{FlatSpec, Matchers}
-
+import io.github.hbase4s.filter._
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.
   */
@@ -122,18 +122,25 @@ class HBaseClientTest extends FlatSpec with Matchers {
 
 
   "Option type" should "be handled" in {
+
+    // test put
     dsl.put(1, WithOpt(1, Option("knight"), Some(true)))
 
+    // test get
     val res = dsl.get(1).map(_.typed[WithOpt].asClass).getOrElse(sys.error("Can't find WithOpt record in HBase"))
-
     res.i shouldBe 1
     res.name shouldBe Some("knight")
     res.exists shouldBe Some(true)
 
-//    TODO: implement support for querying
-    // val res2 = dsl.scan[Int]("withopt:name = option_str(knight) AND (withopt:exists = option_bool(true))")
-//      .map(_.typed[WithOpt].asClass).headOption.getOrElse(sys.error("Can't find WithOpt record in HBase"))
-//    res2.i shouldBe 1
+    // test query within different DSLs
+    val res2 = dsl.scan[Int]("withopt:name = option_str(knight) AND (withopt:exists = option_bool(true))")
+      .map(_.typed[WithOpt].asClass).headOption.getOrElse(sys.error("Can't find WithOpt record in HBase"))
+    res2.i shouldBe 1
+
+
+    val res3 = dsl.scan[Int](c("withopt", "name") === Option("knight") & c("withopt", "exists") === Option(true))
+      .map(_.typed[WithOpt].asClass).headOption.getOrElse(sys.error("Can't find WithOpt record in HBase"))
+    res3.i shouldBe 1
   }
 }
 

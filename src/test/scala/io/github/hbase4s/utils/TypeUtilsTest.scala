@@ -54,7 +54,6 @@ class TypeUtilsTest extends FlatSpec with Matchers {
     anyToBytes(Option(1L)).from(typeOf[Option[Long]]) shouldBe Option(1L)
     anyToBytes(Option(true)).from(typeOf[Option[Boolean]]) shouldBe Option(true)
 
-
   }
 
 }
