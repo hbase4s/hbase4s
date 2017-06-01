@@ -112,7 +112,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
     dsl.scan[Int]("column_value == long(240)").map(_.allColumnNames).toList shouldBe List(List("event:id"))
 
     val r1 = dsl.scan[Int]("keys AND (row_prefix == int(200))")
-    r1.map(_.key).toList shouldBe List(200)
+    r1.map(_.key).toList shouldBe List(200) // just one value based on row prefix
     r1.map(_.asString("event:description")).toList shouldBe List("") // field values should be empty
 
     val r2 = dsl.scan[Int]("first_key AND (row_prefix == int(200)) | start_row == int(199), stop_row == int(201)")

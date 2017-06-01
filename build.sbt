@@ -26,10 +26,10 @@ lazy val hbase4s = (project in file("."))
     ),
     developers := List(
       Developer(
-        id = "vglushak-vt",
+        id = "vglushak",
         name = "Volodymyr Glushak",
         email = "noreply@email",
-        url = url("http://github.com/vglushak-vt")
+        url = url("http://github.com/vglushak")
       )
 
     ),
