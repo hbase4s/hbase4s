@@ -1,4 +1,4 @@
-# HBase4s
+# HBase4s ( _beta_ )
 
 [![Build Status](https://travis-ci.org/hbase4s/hbase4s.svg?branch=develop)](https://travis-ci.org/hbase4s/hbase4s)
 [![Coverage Status](https://coveralls.io/repos/github/hbase4s/hbase4s/badge.svg?branch=develop)](https://coveralls.io/github/hbase4s/hbase4s?branch=develop)
@@ -25,7 +25,7 @@ Required:
 - Scala 2.11
 - HBase 1.3.1
 
-Note! This library is currently under active development. 
+Note! This library is in beta phase and currently under active development. 
 Provided API might be changed in next release without providing full backward compatibility.
 If you urgently need some features or have feedback on existing functionality feel free to contact authors in any available channel.
 
@@ -52,11 +52,12 @@ Establish connection to HBase server, point HBaseClient to work with "transactio
 val client = new HBaseClient(new HBaseConnection(new HBaseDefaultConfig), Table)
 ```
 
-Store case class in HBase table, under provided columns family 
+Store `Event` case class in HBase table, under defined above columns family. 
 ```scala
   val rowId = "unique-event-id"
   client.put(rowId, Event(546, 10L, enabled = true, "some description text"))
 ```
+As you might notice family name does not pass as parameter, by default it's taken from lowercase case class name.
 
 Retrieve data from HBase by key and transform it to instance of `Event` case class
 ```scala

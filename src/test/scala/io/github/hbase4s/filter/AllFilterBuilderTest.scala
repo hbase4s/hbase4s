@@ -18,7 +18,7 @@ class AllFilterBuilderTest extends AbstractFilterTest {
     parseOrFailOnErr("stop_row = row7") shouldBe InclusiveStop("row7")
     parseOrFailOnErr("column_name == date") shouldBe Qualifier(Eq, "date")
     parseOrFailOnErr("column_value == some") shouldBe Value(Eq, "some")
-    parseOrFailOnErr("column_value == some | start_row == row1, stop_row == row15") shouldBe TopLevelExpr(Value(Eq, "some"), Seq(StartRowId("row1"), StopRowId("row15")))
+    parseOrFailOnErr("column_value == some ! start_row == row1, stop_row == row15") shouldBe TopLevelExpr(Value(Eq, "some"), Seq(StartRowId("row1"), StopRowId("row15")))
   }
 
   "Static and string based filters" should "produce the same output" in {
@@ -39,6 +39,9 @@ class AllFilterBuilderTest extends AbstractFilterTest {
     c("event", "name") === "Henry VIII" shouldBe "event:name == \"Henry VIII\"".f
     keys & pageLimit === 2 shouldBe "keys AND (page_count == 2)".f
     (rowPrefix is "r_a") | (columnPrefix is "c_b") shouldBe "(row_prefix == r_a) OR (column_prefix == c_b)".f
+
+
+    (keys | firstKey) ! (startRow is "row1", stopRow is "row18") shouldBe "(keys OR (first_key)) ! start_row == row1, stop_row == row18".f
 
     // tests for custom types
     c("event", "age") === 15 shouldBe "event:age == int(15)".f

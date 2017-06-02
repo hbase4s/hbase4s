@@ -28,7 +28,7 @@ class FilterParser(val input: ParserInput) extends Parser {
 
 
   def ExprOpts: Rule1[Seq[ExprOpts]] = rule {
-    ws ~ '|' ~ ws ~ oneOrMore(ExprOpt).separatedBy(ws ~ ',' ~ ws)
+    ws ~ '!' ~ ws ~ oneOrMore(ExprOpt).separatedBy(ws ~ ',' ~ ws)
   }
 
 

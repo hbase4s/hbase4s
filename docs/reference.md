@@ -11,7 +11,7 @@ However, it provides Filter API, that allows `scan` tables individually (no join
 
 HBase4s provide two version of DSL: string based (whole filter is represented as string) or Scala DSL based (set of scala classes).
 
-Developed DSL contains of two parts: `query_expression | query_options`
+Developed DSL contains of two parts: `query_expression ! query_options`
 
 Available query options are:
 - `start_row == <row_id>` - start scanning from particular row id.
@@ -33,7 +33,7 @@ Scala DSL|String DSL | Description
 `columnValue is "some_value_b"` | `"column_value == some_value_b".f` | Returns all columns with specified value
 `c("event", "name") === "Henry VIII"` | `"event:name == \"Henry VIII\"".f` | Returns rows that have column with specified value
 `keys & pageLimit === 2` | `"keys AND (page_count == 2)".f` | And condition
-```(rowPrefix is "r_a") / (columnPrefix is "c_b")``` | `"(row_prefix == r_a) OR (column_prefix == c_b)".f` | Or condition
+```(rowPrefix is "r_a") | (columnPrefix is "c_b")``` | `"(row_prefix == r_a) OR (column_prefix == c_b)".f` | Or condition
 
 ## Custom types (user defined types)
 

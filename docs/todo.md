@@ -5,7 +5,14 @@
 - Describe how to extend library (how to extend HBase client, parser?)
 It's mandatory, as currently there are no full support for existing HBase API (especially filters coverage).
 
+- It would be good to add clear description 
+
+- Need few tests for different exception scenarios 
+(nonexistent field in search, attempt to store unsupported type etc.)
+
 2. Coding
+
+- Do not hard code family name with case class name, give opportunity to user set non default family name.
 
 - Make common API DSL wrappers available through package object `io.github.hbase4s._` 
 

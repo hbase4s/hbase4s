@@ -29,7 +29,10 @@ package object filter {
 
     def |(b: FilterExpr) = Or(a, b)
 
+    def !(opts: ExprOpts*) = TopLevelExpr(a, opts)
+
   }
+
 
   def keys = KeyOnly
 
@@ -67,6 +70,15 @@ package object filter {
 
   implicit class FilterStr(s: String) {
     def f: Expr = FilterParser.parse(s)
+  }
+
+  // ExprOpts
+  object startRow {
+    def is[T](q: T) = StartRowId(q)
+  }
+
+  object stopRow {
+    def is[T](q: T) = StopRowId(q)
   }
 
 }
