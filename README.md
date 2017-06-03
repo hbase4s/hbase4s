@@ -94,6 +94,8 @@ Remove by key:
   client.delete(rowId)
 ```
 
+Executable examples can be found in project [hbase-examples](https://github.com/hbase4s/hbase4s-examples)
+
 ## Background
 
 HBase does not support data types. All columns and row keys are stored as array of `bytes`. 

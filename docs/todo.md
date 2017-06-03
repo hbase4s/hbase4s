@@ -18,6 +18,8 @@ It's mandatory, as currently there are no full support for existing HBase API (e
 
 - Add possibility to select columns we want to get after scan (theoretically it's high demand feature as it can improve performance, can't it)
 
+- Publish new version to be able to use `hBaseClient` in HBase4s examples.
+
 ### Other tasks
 
 1. Extend filter support to cover all possible HBase filters and support all (most) options for each filter.
