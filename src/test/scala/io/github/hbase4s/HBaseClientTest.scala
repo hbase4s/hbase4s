@@ -5,6 +5,7 @@ import io.github.hbase4s.utils.HBaseImplicitUtils._
 import io.github.hbase4s.utils.HBaseTesting
 import org.scalatest.{FlatSpec, Matchers}
 import io.github.hbase4s.filter._
+
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.
   */
@@ -142,6 +143,17 @@ class HBaseClientTest extends FlatSpec with Matchers {
       .map(_.typed[WithOpt].asClass).headOption.getOrElse(sys.error("Can't find WithOpt record in HBase"))
     res3.i shouldBe 1
   }
+
+
+  "Put all" should "store all records" in {
+    val testData = Event(1, 1L, "default", 1.0f, 1.15, 15, enabled = true)
+    val events = (1 to 300).map { x =>
+      x -> testData.copy(index = x, id = 10L * x, description = s"putAll")
+    }.toMap
+    dsl.putAll(events)
+    dsl.scan[Int]("event:description == putAll").size shouldBe 300
+  }
+
 }
 
 case class WithOpt(i: Int, name: Option[String], exists: Option[Boolean])

@@ -25,14 +25,23 @@ class HBaseClient(connection: HBaseConnection, tableName: String) {
 
   def put[K: TypeTag, T <: AnyRef with Product](key: K, cc: T): Unit = putFields(RecordFactory.build(key, cc))
 
+  def putAll[K: TypeTag, T <: AnyRef with Product](keyValueData: Map[K, T]): Unit =
+    putBatch(keyValueData.map { case (key, cc) =>
+      val record = RecordFactory.build(key, cc)
+      record.key -> record.values
+    })
+
   def putFields(r: Record): Unit = putFields(r.key, r.values)
 
-  def putFields(key: Array[Byte], values: List[Field[Array[Byte]]]): Unit = {
-    val p = new Put(key)
-    values.foreach { v =>
-      p.addColumn(v.family, v.name, v.value)
-    }
-    table.put(p)
+  def putFields(key: Array[Byte], values: List[Field[Array[Byte]]]): Unit = putBatch(Map(key -> values))
+
+  def putBatch(keyValueData: Map[Array[Byte], List[Field[Array[Byte]]]]): Unit = {
+    val puts = keyValueData.map { case (key, fields) =>
+      val p = new Put(key)
+      fields.foreach(f => p.addColumn(f.family, f.name, f.value))
+      p
+    }.toList.asJava
+    table.put(puts)
   }
 
   /**
