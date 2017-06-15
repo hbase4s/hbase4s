@@ -39,7 +39,7 @@ import io.github.hbase4s.config.HBaseDefaultConfig
 import io.github.hbase4s.utils.HBaseImplicitUtils._
 ```
 
-Prerequisites. Specified table with relevant family name must already exists in HBase (it can be created via `hbase shell`)
+**Prerequisites**. Specified table with relevant family name must already exists in HBase (it can be created via `hbase shell`)
 ```scala
   case class Event(index: Int, id: Long, enabled: Boolean, description: String)
 
@@ -47,19 +47,19 @@ Prerequisites. Specified table with relevant family name must already exists in 
   val Family = "event"
 ```
   
-Establish connection to HBase server, point HBaseClient to work with "transactions" table
+Establish **connection** to HBase server, point HBaseClient to work with "transactions" table
 ```scala
 val client = new HBaseClient(new HBaseConnection(new HBaseDefaultConfig), Table)
 ```
 
-Store `Event` case class in HBase table, under defined above columns family. 
+**Store** `Event` case class in HBase table, under defined above columns family. 
 ```scala
   val rowId = "unique-event-id"
   client.put(rowId, Event(546, 10L, enabled = true, "some description text"))
 ```
 As you might notice family name does not pass as parameter, by default it's taken from lowercase case class name.
 
-Retrieve data from HBase by key and transform it to instance of `Event` case class
+**Get**. Retrieve data from HBase by key and transform it to instance of `Event` case class
 ```scala
   val eventInDb = client.get(rowId).map(_.typed[Event].asClass)
 ```
@@ -67,7 +67,7 @@ Retrieve data from HBase by key and transform it to instance of `Event` case cla
 This is the most efficient way to work with HBase (querying by row id), 
 but there is also extensive query language that allows user build complex queries based on numerous conditions and columns.
   
-HBase4s provides two ways of querying data from HBase table results are represented as `List` of `Event` class
+**Scan**. HBase4s provides two ways of querying data from HBase table results are represented as `List` of `Event` class
 
 1. string-based DSL
 ```scala
@@ -89,7 +89,7 @@ HBase4s provides two ways of querying data from HBase table results are represen
 Both DSLs filters translated to native java `Scan` object and should be equally efficient.
 Full set of supported querying features are described in reference guide.
 
-Remove by key:
+**Remove** by key:
 ```scala
   client.delete(rowId)
 ```
