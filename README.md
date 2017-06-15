@@ -1,4 +1,4 @@
-# HBase4s ( _beta_ )
+# HBase4s <sup>*beta*</sup>
 
 [![Build Status](https://travis-ci.org/hbase4s/hbase4s.svg?branch=develop)](https://travis-ci.org/hbase4s/hbase4s)
 [![Coverage Status](https://coveralls.io/repos/github/hbase4s/hbase4s/badge.svg?branch=develop)](https://coveralls.io/github/hbase4s/hbase4s?branch=develop)
