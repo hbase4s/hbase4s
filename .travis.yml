@@ -12,7 +12,7 @@ after_success:
   - sbt coveralls
 
 scala:
-  - 2.11.8
+  - 2.12.3
 jdk:
   - oraclejdk8
 
