@@ -1,5 +1,7 @@
 package io.github.hbase4s
 
+import org.apache.hadoop.hbase.TableName
+import org.apache.hadoop.hbase.util.Bytes
 import io.github.hbase4s.config.HBaseExternalConfig
 import io.github.hbase4s.utils.HBaseImplicitUtils._
 import io.github.hbase4s.utils.HBaseTesting
@@ -20,7 +22,7 @@ class HBaseClientTest extends FlatSpec with Matchers {
   private[this] val F1 = "field1"
   private[this] val F2 = "field2"
   private[this] val Families: Array[Array[Byte]] = Array(Fam1, Fam2, Fam3, Fam4)
-  utility.createTable(TestTable, Families, 1)
+  utility.createTable(TableName.valueOf(Bytes.toBytes(TestTable)), Families)
 
   case class Test2Field[T](key: T, field1: String, field2: String)
 

@@ -9,15 +9,16 @@ import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe._
+import java.io.Serializable
 
 /**
   * Created by Volodymyr.Glushak on 10/05/2017.
   */
-class HBaseConnection(conf: HBaseConfig) {
+class HBaseConnection (conf: HBaseConfig) {
   val conn: Connection = ConnectionFactory.createConnection(conf.configuration)
 }
 
-class HBaseClient(connection: HBaseConnection, tableName: String) {
+class HBaseClient(connection: HBaseConnection, tableName: String) extends Serializable {
 
   protected val logger: Logger = LoggerFactory.getLogger(getClass)
 
