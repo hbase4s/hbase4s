@@ -16,13 +16,15 @@ import org.scalatest.{FlatSpec, Matchers}
 class HBaseClientComparisonTest extends FlatSpec with Matchers {
 
   private[this] val utility = HBaseTesting.hBaseServer
-  private val TableJava = "table_java"
-  private val TableScala = "table_scala"
+  var tableJava = "table_java"
+  var tableScala = "table_scala"
+  private val TableJava = TableName.valueOf(Bytes.toBytes("table_java"))
+  private val TableScala = TableName.valueOf(Bytes.toBytes("table_scala"))
 
   {
     import io.github.hbase4s.utils.HBaseImplicitUtils._
-    utility.createTable(TableJava, "f1")
-    utility.createTable(TableScala, "f1")
+    utility.createTable(TableJava, Bytes.toBytes("f1"))
+    utility.createTable(TableScala, Bytes.toBytes("f1"))
   }
 
   private def runStoreJava(dsl: Table, count: Int) = {
@@ -58,8 +60,8 @@ class HBaseClientComparisonTest extends FlatSpec with Matchers {
   private val Max = 10000
 
   "Java/Scala DSL" should "store and query data" in {
-    val javaDsl = ConnectionFactory.createConnection(utility.getConfiguration).getTable(TableName.valueOf(TableJava))
-    val scalaDsl = new HBaseClient(new HBaseConnection(new HBaseExternalConfig(utility.getConfiguration)), TableScala)
+    val javaDsl = ConnectionFactory.createConnection(utility.getConfiguration).getTable(TableName.valueOf(tableJava))
+    val scalaDsl = new HBaseClient(new HBaseConnection(new HBaseExternalConfig(utility.getConfiguration)), tableScala)
 
     // warmup phase
     runStoreScala(scalaDsl, Warmup)

@@ -22,8 +22,8 @@ Add following library to your project:
 ```libraryDependencies += "io.github.hbase4s" %% "hbase4s-core" % "0.1.2"```
 
 Required:
-- Scala 2.11
-- HBase 1.3.1
+- Scala 2.12.10
+- HBase 2.2.5
 
 Note! This library is in beta phase and currently under active development. 
 Provided API might be changed in next release without providing full backward compatibility.

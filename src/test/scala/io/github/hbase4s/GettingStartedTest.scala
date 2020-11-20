@@ -9,6 +9,9 @@ import org.scalatest.{FlatSpec, Matchers}
 import io.github.hbase4s.utils.HBaseImplicitUtils._
 import io.github.hbase4s.filter._
 
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.hbase.{TableName}
+
 /**
   * Created by Volodymyr.Glushak on 21/05/2017.
   */
@@ -16,16 +19,17 @@ class GettingStartedTest extends FlatSpec with Matchers {
 
   // set of helpers for test
   private[this] val utility = HBaseTesting.hBaseServer
-  private[this] val Table = "transactions"
-  private[this] val Family = "event"
+  var tableName = "transactions"
+  private[this] val Table = TableName.valueOf(Bytes.toBytes("transactions"))
+  private[this] val Family = Bytes.toBytes("event")
 
   // family column name should have the same name as case class (lowercase) we want to store in this table.
-  utility.createTable(Table, Family, 1)
+  utility.createTable(Table, Family)
 
   case class Event(index: Int, id: Long, enabled: Boolean, description: String)
 
   // establish connection to HBase server, point HBaseClient to work with "transactions" table
-  val client: HBaseClient = hBaseClient(new HBaseExternalConfig(utility.getConfiguration), Table)
+  val client: HBaseClient = hBaseClient(new HBaseExternalConfig(utility.getConfiguration), tableName)
 
   "Sample 1" should "show how to work with library using case classes" in {
     val e = Event(546, 10L, enabled = true, "oh-oh")

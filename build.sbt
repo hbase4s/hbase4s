@@ -4,17 +4,17 @@ lazy val Versions = new {
   val scalaLogging = "3.5.0"
   val logback = "1.2.1"
   val parboiled = "2.1.4"
-  val hadoop = "2.6.0"
-  val hbase = "1.3.1"
+  val hadoop = "3.2.1"
+  val hbase = "2.2.5"
   val scalaTest = "3.0.0"
 }
 
 lazy val hbase4s = (project in file("."))
   .settings(
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.12.10",
     organization := "io.github.hbase4s",
     moduleName := "hbase4s-core",
-    version := "0.1.2",
+    version := "0.2.0",
     useGpg := true,
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("http://github.com/hbase4s")),
@@ -91,6 +91,7 @@ lazy val hbase4s = (project in file("."))
       "org.apache.hbase" % "hbase-hadoop-compat" % Versions.hbase % Test,
       "org.apache.hbase" % "hbase-hadoop2-compat" % Versions.hbase % Test,
       "org.apache.hbase" % "hbase-hadoop-compat" % Versions.hbase % Test classifier "tests",
-      "org.apache.hbase" % "hbase-hadoop2-compat" % Versions.hbase % Test classifier "tests"
+      "org.apache.hbase" % "hbase-hadoop2-compat" % Versions.hbase % Test classifier "tests",
+      "org.apache.hbase" % "hbase-testing-util" % Versions.hbase % Test
     )
   )
